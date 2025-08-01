@@ -20,11 +20,15 @@
       border-radius: 12px;
       overflow: hidden;
       position: relative;
+      width: 100%;
+      max-width: 600px;
+      margin: 0 auto;
     }
     .camera-video {
       width: 100%;
       height: 400px;
       object-fit: cover;
+      display: block;
     }
     .capture-button {
       width: 70px;
@@ -37,6 +41,7 @@
       display: flex;
       align-items: center;
       justify-content: center;
+      position: relative;
     }
     .capture-button::after {
       content: '';
@@ -45,6 +50,28 @@
       height: 50px;
       background: #4facfe;
       border-radius: 50%;
+    }
+    .camera-controls {
+      position: absolute;
+      bottom: 20px;
+      left: 0;
+      right: 0;
+      display: flex;
+      justify-content: center;
+    }
+    .cancel-button {
+      position: absolute;
+      top: 20px;
+      right: 20px;
+      width: 40px;
+      height: 40px;
+      background: rgba(0, 0, 0, 0.5);
+      border-radius: 50%;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      cursor: pointer;
+      z-index: 10;
     }
     .detection-scan {
       position: absolute;
@@ -134,6 +161,101 @@
       box-shadow: 0 4px 12px rgba(79, 172, 254, 0.3);
       z-index: 100;
     }
+    .camera-placeholder {
+      width: 100%;
+      height: 400px;
+      background: linear-gradient(135deg, #bbdefb, #90caf9);
+      border-radius: 9px;
+      display: flex;
+      flex-direction: column;
+      justify-content: center;
+      align-items: center;
+      color: #1a73e8;
+      text-align: center;
+      padding: 20px;
+      border: 2px dashed #4facfe;
+    }
+    .camera-overlay {
+      position: absolute;
+      top: 0;
+      left: 0;
+      right: 0;
+      bottom: 0;
+      pointer-events: none;
+      display: flex;
+      flex-direction: column;
+      justify-content: space-between;
+      padding: 20px;
+      display: none;
+    }
+    .camera-header {
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+    }
+    .photo-preview {
+      width: 100%;
+      max-width: 600px;
+      margin: 0 auto;
+      border-radius: 12px;
+      overflow: hidden;
+      display: none;
+      box-shadow: 0 4px 12px rgba(0,0,0,0.1);
+    }
+    #captured-photo {
+      width: 100%;
+      height: auto;
+      display: block;
+    }
+    .action-buttons {
+      display: flex;
+      gap: 15px;
+      margin-top: 20px;
+      flex-wrap: wrap;
+      justify-content: center;
+    }
+    .detection-section {
+      background: white;
+      border-radius: 12px;
+      box-shadow: 0 4px 20px rgba(0,0,0,0.12);
+      padding: 30px;
+      margin: 40px 0;
+      display: none;
+      position: relative;
+      z-index: 10;
+    }
+    .detection-progress {
+      width: 100%;
+      height: 10px;
+      background: #e3f2fd;
+      border-radius: 5px;
+      overflow: hidden;
+      margin: 20px 0;
+      border: 1px solid #bbdefb;
+    }
+    .progress-bar {
+      height: 100%;
+      background: linear-gradient(90deg, #4facfe, #00f2fe);
+      border-radius: 5px;
+      width: 0%;
+      transition: width 0.5s ease;
+    }
+    .detection-status {
+      text-align: center;
+      margin-top: 15px;
+      color: #1a73e8;
+      font-weight: 500;
+    }
+    .results-section {
+      background: white;
+      border-radius: 12px;
+      box-shadow: 0 4px 20px rgba(0,0,0,0.12);
+      padding: 30px;
+      margin: 40px 0;
+      display: none;
+      position: relative;
+      z-index: 10;
+    }
   </style>
 </head>
 <body>
@@ -143,15 +265,13 @@
 
     const App = () => {
       const [cameraActive, setCameraActive] = useState(false);
+      const [cameraLoading, setCameraLoading] = useState(false);
       const [capturedImage, setCapturedImage] = useState(null);
       const [detectionProgress, setDetectionProgress] = useState(0);
       const [detectionResults, setDetectionResults] = useState([]);
       const [showDetection, setShowDetection] = useState(false);
       const [cameraError, setCameraError] = useState('');
       const [showPhotoOptions, setShowPhotoOptions] = useState(false);
-      const [showWalletConnect, setShowWalletConnect] = useState(false);
-      const [walletConnected, setWalletConnected] = useState(false);
-      const [nftMinting, setNftMinting] = useState(false);
       const [celebrityConfirmed, setCelebrityConfirmed] = useState(false);
       const [confirmedCelebrity, setConfirmedCelebrity] = useState(null);
       const [userTier, setUserTier] = useState('Starter');
@@ -179,53 +299,56 @@
         'Prestige': { maxStakes: Infinity, fee: 500 }
       };
 
-      useEffect(() => {
-        const startCamera = async () => {
-          setCameraError('');
-          try {
-            if (!navigator.mediaDevices || !navigator.mediaDevices.getUserMedia) {
-              throw new Error('Camera API not supported in this browser');
-            }
-            
-            const stream = await navigator.mediaDevices.getUserMedia({
-              video: { 
-                facingMode: 'user',
-                width: { ideal: 1280 },
-                height: { ideal: 720 }
-              }
-            });
-            
-            if (videoRef.current) {
-              videoRef.current.srcObject = stream;
-              videoRef.current.onloadedmetadata = () => {
-                videoRef.current.play();
-                setCameraActive(true);
-              };
-            }
-          } catch (err) {
-            setCameraError(err.message || 'Failed to access camera');
-            console.error('Camera error:', err);
-          }
-        };
-        
-        if (showPhotoOptions) {
-          startCamera();
-        }
-        
-        return () => {
-          if (videoRef.current?.srcObject) {
-            const tracks = videoRef.current.srcObject.getTracks();
-            tracks.forEach(track => track.stop());
-          }
-        };
-      }, [showPhotoOptions]);
-
-      const startCamera = () => {
+      const startCamera = async () => {
         setShowPhotoOptions(true);
         setCameraError('');
+        setCameraLoading(true);
         setCapturedImage(null);
         setCelebrityConfirmed(false);
         setConfirmedCelebrity(null);
+        
+        try {
+          if (!navigator.mediaDevices || !navigator.mediaDevices.getUserMedia) {
+            throw new Error('Camera API not supported in this browser');
+          }
+          
+          const stream = await navigator.mediaDevices.getUserMedia({
+            video: { 
+              facingMode: 'user',
+              width: { ideal: 1280 },
+              height: { ideal: 720 }
+            }
+          });
+          
+          if (videoRef.current) {
+            videoRef.current.srcObject = stream;
+            videoRef.current.onloadedmetadata = () => {
+              videoRef.current.play();
+              setCameraActive(true);
+              setCameraLoading(false);
+            };
+          }
+        } catch (err) {
+          setCameraLoading(false);
+          setCameraError(err.message || 'Failed to access camera');
+          console.error('Camera error:', err);
+          
+          // Reset state if camera access fails
+          setShowPhotoOptions(false);
+          
+          // Show error in UI
+          setTimeout(() => {
+            if (err.name === 'NotAllowedError') {
+              alert('Camera access denied. Please allow camera access to use this feature.');
+            } else if (err.name === 'NotFoundError') {
+              alert('No camera found on this device.');
+            } else if (err.name === 'NotReadableError') {
+              alert('Camera is already in use by another application.');
+            } else {
+              alert(`Error accessing camera: ${err.message}`);
+            }
+          }, 100);
+        }
       };
 
       const stopCamera = () => {
@@ -235,6 +358,7 @@
           videoRef.current.srcObject = null;
         }
         setCameraActive(false);
+        setShowPhotoOptions(false);
       };
 
       const capturePhoto = () => {
@@ -302,14 +426,6 @@
 
       const handleStakePhoto = () => {
         // Check if user can stake
-        const tierInfo = {
-          'Starter': { maxStakes: 0, fee: 0 },
-          'Explorer': { maxStakes: 2, fee: 20 },
-          'Influencer': { maxStakes: 5, fee: 50 },
-          'Elite': { maxStakes: 10, fee: 100 },
-          'Prestige': { maxStakes: Infinity, fee: 500 }
-        };
-        
         const currentTierInfo = tierInfo[userTier];
         
         if (stakedPhotos.length >= currentTierInfo.maxStakes && userTier !== 'Prestige') {
@@ -342,24 +458,9 @@
       };
 
       const handleMintNft = () => {
-        setNftMinting(true);
-        
-        // Simulate NFT minting process
-        let progress = 0;
-        const interval = setInterval(() => {
-          progress += 5;
-          setDetectionProgress(progress);
-          
-          if (progress >= 100) {
-            clearInterval(interval);
-            setTimeout(() => {
-              setNftMinting(false);
-              alert('NFT minted successfully! Your celebrity photo is now an NFT.');
-              setShowPhotoOptions(false);
-              setCapturedImage(null);
-            }, 500);
-          }
-        }, 100);
+        alert('NFT minting process would start here. For demo purposes, this is simulated.');
+        setShowPhotoOptions(false);
+        setCapturedImage(null);
       };
 
       return (
@@ -386,16 +487,6 @@
                 <div className="bg-gray-700 rounded-full px-4 py-2 flex items-center">
                   <span className={`user-tier ${userTier.toLowerCase()}`}>{userTier}</span>
                 </div>
-                <button 
-                  onClick={() => setWalletConnected(!walletConnected)}
-                  className={`px-4 py-2 rounded-lg transition ${
-                    walletConnected 
-                      ? 'bg-green-500/20 text-green-400' 
-                      : 'bg-gray-700 text-gray-300 hover:bg-gray-600'
-                  }`}
-                >
-                  {walletConnected ? 'Wallet Connected' : 'Connect Wallet'}
-                </button>
               </div>
             </div>
           </header>
@@ -437,7 +528,7 @@
               <div className="bg-gray-800 rounded-2xl shadow-xl p-6">
                 <h2 className="text-2xl font-bold text-white mb-6">Capture & Detect Celebrities</h2>
                 
-                {!cameraActive && !capturedImage && !showPhotoOptions && !showWalletConnect && !nftMinting && !celebrityConfirmed && (
+                {!showPhotoOptions && !cameraLoading && !cameraError && (
                   <div className="text-center">
                     <div className="w-24 h-24 bg-blue-100 rounded-full flex items-center justify-center mx-auto mb-4">
                       <svg xmlns="http://www.w3.org/2000/svg" className="h-12 w-12 text-yellow-500" fill="none" viewBox="0 0 24 24" stroke="currentColor">
@@ -462,6 +553,14 @@
                   </div>
                 )}
 
+                {cameraLoading && (
+                  <div className="text-center">
+                    <div className="w-16 h-16 border-4 border-blue-500 border-t-transparent rounded-full animate-spin mx-auto mb-4"></div>
+                    <h3 className="text-xl font-bold text-white mb-4">Accessing Camera</h3>
+                    <p className="text-gray-300">Please allow camera access when prompted</p>
+                  </div>
+                )}
+
                 {cameraActive && (
                   <div>
                     <div className="camera-container">
@@ -471,35 +570,19 @@
                         playsInline 
                         className="camera-video"
                       />
+                      <div className="cancel-button" onClick={stopCamera}>
+                        <svg xmlns="http://www.w3.org/2000/svg" className="h-6 w-6 text-white" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+                          <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M6 18L18 6M6 6l12 12" />
+                        </svg>
+                      </div>
                       <div className="camera-controls">
-                        <div 
-                          className="cancel-button" 
-                          onClick={stopCamera}
-                          style={{ 
-                            width: '40px', 
-                            height: '40px', 
-                            background: 'rgba(0, 0, 0, 0.5)',
-                            borderRadius: '50%',
-                            display: 'flex',
-                            alignItems: 'center',
-                            justifyContent: 'center',
-                            cursor: 'pointer'
-                          }}
-                        >
-                          <svg xmlns="http://www.w3.org/2000/svg" className="h-6 w-6 text-white" fill="none" viewBox="0 0 24 24" stroke="currentColor">
-                            <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M6 18L18 6M6 6l12 12" />
-                          </svg>
-                        </div>
-                        <div 
-                          className="capture-button" 
-                          onClick={capturePhoto}
-                        ></div>
+                        <div className="capture-button" onClick={capturePhoto}></div>
                       </div>
                     </div>
                   </div>
                 )}
 
-                {capturedImage && showPhotoOptions && (
+                {capturedImage && (
                   <div className="mt-6">
                     <h3 className="text-lg font-semibold text-white mb-4">Your Captured Photo</h3>
                     <img src={capturedImage} alt="Captured" className="w-full rounded-xl shadow-lg mb-4" />
