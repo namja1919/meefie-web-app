@@ -164,74 +164,52 @@
     .camera-placeholder {
       width: 100%;
       height: 400px;
-      background: linear-gradient(135deg, #bbdefb, #90caf9);
-      border-radius: 9px;
+      background: linear-gradient(135deg, #1e3a8a, #0c4a6e);
+      border-radius: 12px;
       display: flex;
       flex-direction: column;
       justify-content: center;
       align-items: center;
-      color: #1a73e8;
+      color: white;
       text-align: center;
       padding: 20px;
       border: 2px dashed #4facfe;
     }
-    .camera-overlay {
-      position: absolute;
-      top: 0;
-      left: 0;
-      right: 0;
-      bottom: 0;
-      pointer-events: none;
-      display: flex;
-      flex-direction: column;
-      justify-content: space-between;
-      padding: 20px;
-      display: none;
+    .loading-spinner {
+      border: 4px solid rgba(255, 255, 255, 0.3);
+      border-top: 4px solid #4facfe;
+      border-radius: 50%;
+      width: 40px;
+      height: 40px;
+      animation: spin 1s linear infinite;
+      margin-bottom: 10px;
     }
-    .camera-header {
-      display: flex;
-      justify-content: space-between;
-      align-items: center;
+    @keyframes spin {
+      0% { transform: rotate(0deg); }
+      100% { transform: rotate(360deg); }
     }
-    .photo-preview {
-      width: 100%;
-      max-width: 600px;
-      margin: 0 auto;
-      border-radius: 12px;
-      overflow: hidden;
-      display: none;
-      box-shadow: 0 4px 12px rgba(0,0,0,0.1);
-    }
-    #captured-photo {
-      width: 100%;
-      height: auto;
-      display: block;
-    }
-    .action-buttons {
-      display: flex;
-      gap: 15px;
-      margin-top: 20px;
-      flex-wrap: wrap;
-      justify-content: center;
+    .error-message {
+      background: #fff0f0;
+      border: 1px solid #ffcccc;
+      border-radius: 8px;
+      padding: 12px;
+      margin: 15px 0;
+      color: #d32f2f;
     }
     .detection-section {
-      background: white;
+      background: #1e293b;
       border-radius: 12px;
-      box-shadow: 0 4px 20px rgba(0,0,0,0.12);
       padding: 30px;
       margin: 40px 0;
       display: none;
-      position: relative;
-      z-index: 10;
     }
     .detection-progress {
       width: 100%;
       height: 10px;
-      background: #e3f2fd;
+      background: #334155;
       border-radius: 5px;
       overflow: hidden;
       margin: 20px 0;
-      border: 1px solid #bbdefb;
     }
     .progress-bar {
       height: 100%;
@@ -243,18 +221,15 @@
     .detection-status {
       text-align: center;
       margin-top: 15px;
-      color: #1a73e8;
+      color: #cbd5e1;
       font-weight: 500;
     }
     .results-section {
-      background: white;
+      background: #1e293b;
       border-radius: 12px;
-      box-shadow: 0 4px 20px rgba(0,0,0,0.12);
       padding: 30px;
       margin: 40px 0;
       display: none;
-      position: relative;
-      z-index: 10;
     }
   </style>
 </head>
@@ -277,6 +252,7 @@
       const [userTier, setUserTier] = useState('Starter');
       const [userMftBalance, setUserMftBalance] = useState(500);
       const [stakedPhotos, setStakedPhotos] = useState([]);
+      const [walletConnected, setWalletConnected] = useState(false);
       
       const videoRef = useRef(null);
       const canvasRef = useRef(null);
@@ -323,9 +299,16 @@
           if (videoRef.current) {
             videoRef.current.srcObject = stream;
             videoRef.current.onloadedmetadata = () => {
-              videoRef.current.play();
-              setCameraActive(true);
-              setCameraLoading(false);
+              try {
+                videoRef.current.play();
+                setCameraActive(true);
+                setCameraLoading(false);
+              } catch (playError) {
+                console.error('Video play error:', playError);
+                setCameraError('Failed to play video stream');
+                setCameraLoading(false);
+                setShowPhotoOptions(false);
+              }
             };
           }
         } catch (err) {
@@ -333,10 +316,7 @@
           setCameraError(err.message || 'Failed to access camera');
           console.error('Camera error:', err);
           
-          // Reset state if camera access fails
-          setShowPhotoOptions(false);
-          
-          // Show error in UI
+          // Show appropriate error message
           setTimeout(() => {
             if (err.name === 'NotAllowedError') {
               alert('Camera access denied. Please allow camera access to use this feature.');
@@ -348,6 +328,9 @@
               alert(`Error accessing camera: ${err.message}`);
             }
           }, 100);
+          
+          // Reset state
+          setShowPhotoOptions(false);
         }
       };
 
@@ -463,6 +446,13 @@
         setCapturedImage(null);
       };
 
+      const connectWallet = () => {
+        setWalletConnected(!walletConnected);
+        if (!walletConnected) {
+          alert('Wallet connected successfully! You can now stake photos and earn rewards.');
+        }
+      };
+
       return (
         <div className="min-h-screen bg-gray-900">
           {/* Header */}
@@ -487,6 +477,16 @@
                 <div className="bg-gray-700 rounded-full px-4 py-2 flex items-center">
                   <span className={`user-tier ${userTier.toLowerCase()}`}>{userTier}</span>
                 </div>
+                <button 
+                  onClick={connectWallet}
+                  className={`px-4 py-2 rounded-full transition ${
+                    walletConnected 
+                      ? 'bg-green-500/20 text-green-400' 
+                      : 'bg-blue-500/20 text-blue-400 hover:bg-blue-500/30'
+                  }`}
+                >
+                  {walletConnected ? 'Wallet Connected' : 'Connect Wallet'}
+                </button>
               </div>
             </div>
           </header>
@@ -539,7 +539,7 @@
                     <p className="text-gray-300 mb-6">Take a photo with a celebrity using your device camera</p>
                     
                     {cameraError && (
-                      <div className="bg-red-500/10 text-red-400 p-3 rounded-lg mb-4 text-sm">
+                      <div className="error-message">
                         {cameraError}
                       </div>
                     )}
@@ -555,7 +555,7 @@
 
                 {cameraLoading && (
                   <div className="text-center">
-                    <div className="w-16 h-16 border-4 border-blue-500 border-t-transparent rounded-full animate-spin mx-auto mb-4"></div>
+                    <div className="loading-spinner mx-auto mb-4"></div>
                     <h3 className="text-xl font-bold text-white mb-4">Accessing Camera</h3>
                     <p className="text-gray-300">Please allow camera access when prompted</p>
                   </div>
