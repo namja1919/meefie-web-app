@@ -3,45 +3,15 @@
 <head>
   <meta charset="UTF-8" />
   <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-  <title>Meefie - AI Celebrity Detection</title>
+  <title>Meefie - Login & Camera</title>
   <script src="https://cdn.tailwindcss.com"></script>
-  <link href="https://fonts.googleapis.com/css2?family=Poppins:wght@300;400;500;600;700&display=swap" rel="stylesheet">
   <script src="https://unpkg.com/react@18/umd/react.development.js"></script>
   <script src="https://unpkg.com/react-dom@18/umd/react-dom.development.js"></script>
   <script src="https://unpkg.com/@babel/standalone/babel.min.js"></script>
   <style>
     body {
-      font-family: 'Poppins', sans-serif;
       background: linear-gradient(135deg, #0f172a, #1e293b);
       color: white;
-    }
-    .btn-primary {
-      background: linear-gradient(to right, #4facfe, #00f2fe);
-      color: white;
-      padding: 12px 24px;
-      border-radius: 12px;
-      font-weight: 600;
-      transition: all 0.3s ease;
-    }
-    .btn-primary:hover {
-      opacity: 0.9;
-      transform: translateY(-2px);
-      box-shadow: 0 4px 12px rgba(79, 172, 254, 0.3);
-    }
-    .input-field {
-      width: 100%;
-      padding: 12px 16px;
-      border-radius: 12px;
-      border: 2px solid #334155;
-      background: #1e293b;
-      color: white;
-      font-size: 16px;
-      transition: all 0.3s ease;
-    }
-    .input-field:focus {
-      border-color: #4facfe;
-      outline: none;
-      box-shadow: 0 0 0 3px rgba(79, 172, 254, 0.2);
     }
     .camera-container {
       position: relative;
@@ -53,15 +23,6 @@
       width: 100%;
       height: 400px;
       object-fit: cover;
-    }
-    .camera-controls {
-      position: absolute;
-      bottom: 20px;
-      left: 0;
-      right: 0;
-      display: flex;
-      justify-content: center;
-      gap: 20px;
     }
     .capture-button {
       width: 70px;
@@ -94,19 +55,6 @@
       cursor: pointer;
       z-index: 10;
     }
-    .camera-placeholder {
-      width: 100%;
-      height: 400px;
-      background: #1e293b;
-      border-radius: 12px;
-      display: flex;
-      flex-direction: column;
-      justify-content: center;
-      align-items: center;
-      color: white;
-      text-align: center;
-      padding: 20px;
-    }
     .loading-spinner {
       border: 4px solid rgba(255, 255, 255, 0.3);
       border-top: 4px solid #FFD700;
@@ -127,35 +75,13 @@
       border-radius: 8px;
       color: #d32f2f;
     }
-    .photo-preview {
-      max-width: 100%;
-      border-radius: 12px;
-      margin: 20px 0;
-    }
-    .card {
-      background: #1e293b;
-      border-radius: 16px;
-      padding: 24px;
-      box-shadow: 0 4px 20px rgba(0, 0, 0, 0.15);
-    }
-    .tier-badge {
-      padding: 6px 16px;
-      border-radius: 50px;
-      font-weight: 600;
-      display: inline-block;
-    }
-    .starter { background: #f8f9fa; color: #6c757d; }
-    .explorer { background: #d1ecf1; color: #0c5460; }
-    .influencer { background: #d4edda; color: #155724; }
-    .elite { background: #fff3cd; color: #856404; }
-    .prestige { background: #f8d7da; color: #721c24; }
   </style>
 </head>
 <body>
   <div id="root"></div>
-  
+
   <script type="text/babel">
-    const { useState, useEffect, useRef } = React;
+    const { useState, useRef, useEffect } = React;
 
     const LoginPage = ({ onLogin }) => {
       const [email, setEmail] = useState('');
@@ -164,12 +90,6 @@
 
       const handleLogin = (e) => {
         e.preventDefault();
-        
-        // Simple validation
-        if (!email || !password) {
-          setError('Please enter both email and password');
-          return;
-        }
         
         // Simulate login
         setTimeout(() => {
@@ -184,75 +104,73 @@
 
       return (
         <div className="min-h-screen flex items-center justify-center p-4 bg-gray-900">
-          <div className="w-full max-w-md">
+          <div className="w-full max-w-md bg-white rounded-2xl shadow-xl p-8">
             <div className="text-center mb-8">
               <div className="w-16 h-16 bg-gradient-to-r from-blue-400 to-cyan-400 rounded-full flex items-center justify-center mx-auto mb-4">
                 <span className="text-white font-bold text-2xl">M</span>
               </div>
-              <h1 className="text-3xl font-bold text-white mb-2">Welcome to Meefie</h1>
-              <p className="text-gray-400">Login to your account</p>
+              <h1 className="text-3xl font-bold text-gray-800">Welcome to Meefie</h1>
+              <p className="text-gray-500">Login to your account</p>
             </div>
             
-            <div className="bg-gray-800 rounded-2xl p-8 shadow-xl">
+            <form onSubmit={handleLogin} className="space-y-6">
               {error && (
                 <div className="error-message mb-4">
                   {error}
                 </div>
               )}
               
-              <form onSubmit={handleLogin} className="space-y-6">
-                <div>
-                  <label className="block text-sm font-medium text-gray-300 mb-2">Email</label>
-                  <input
-                    type="email"
-                    className="input-field"
-                    placeholder="Enter your email"
-                    value={email}
-                    onChange={(e) => setEmail(e.target.value)}
-                  />
+              <div>
+                <label className="block text-sm font-medium text-gray-700 mb-2">Email</label>
+                <input
+                  type="email"
+                  className="w-full px-4 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-yellow-500"
+                  placeholder="Enter your email"
+                  value={email}
+                  onChange={(e) => setEmail(e.target.value)}
+                />
+              </div>
+              
+              <div>
+                <label className="block text-sm font-medium text-gray-700 mb-2">Password</label>
+                <input
+                  type="password"
+                  className="w-full px-4 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-yellow-500"
+                  placeholder="Enter your password"
+                  value={password}
+                  onChange={(e) => setPassword(e.target.value)}
+                />
+              </div>
+              
+              <button type="submit" className="bg-gradient-to-r from-yellow-500 to-orange-500 text-white px-6 py-3 rounded-lg w-full hover:opacity-90 transition">
+                Sign In
+              </button>
+              
+              <div className="text-center mt-4">
+                <p className="text-gray-500">
+                  Don't have an account? <span className="text-yellow-500 font-medium cursor-pointer">Sign up</span>
+                </p>
+              </div>
+              
+              <div className="relative mt-6">
+                <div className="absolute inset-0 flex items-center">
+                  <div className="w-full border-t border-gray-300"></div>
                 </div>
-                
-                <div>
-                  <label className="block text-sm font-medium text-gray-300 mb-2">Password</label>
-                  <input
-                    type="password"
-                    className="input-field"
-                    placeholder="Enter your password"
-                    value={password}
-                    onChange={(e) => setPassword(e.target.value)}
-                  />
+                <div className="relative flex justify-center text-sm">
+                  <span className="px-2 bg-white text-gray-500">Or continue with</span>
                 </div>
-                
-                <button type="submit" className="btn-primary w-full">
-                  Sign In
-                </button>
-                
-                <div className="text-center">
-                  <p className="text-gray-400">
-                    Don't have an account? <span className="text-blue-400 font-medium cursor-pointer">Sign up</span>
-                  </p>
-                </div>
-                
-                <div className="relative">
-                  <div className="absolute inset-0 flex items-center">
-                    <div className="w-full border-t border-gray-700"></div>
-                  </div>
-                  <div className="relative flex justify-center text-sm">
-                    <span className="px-2 bg-gray-800 text-gray-400">Or continue with</span>
-                  </div>
-                </div>
-                
-                <button className="w-full flex items-center justify-center px-4 py-2 border border-gray-700 rounded-lg hover:bg-gray-700 transition">
-                  <svg xmlns="http://www.w3.org/2000/svg" className="h-5 w-5 mr-2" viewBox="0 0 24 24">
-                    <path d="M22.56 12.25c0-.73-.06-1.44-.16-2.14H12v4.06h5.53a4.9 4.9 0 0 1-2.16 3.3v2.77h3.48c2.05-1.92 3.24-4.7 3.24-7.95z" fill="#4285F4"/>
-                    <path d="M12 23a9.99 9.99 0 0 0 6.84-2.53l-3.48-2.77a6.9 6.9 0 0 1-1.96.34c-2.53 0-4.67-1.72-5.45-4.01H3.73v2.62A9.96 9.96 0 0 0 12 23z" fill="#34A853"/>
-                    <path d="M5.55 15.17a6.84 6.84 0 0 1-.45-2.17c0-.75.11-1.48.29-2.17L3.73 8.21A9.96 9.96 0 0 0 3 12c0 1.55.38 3.02 1.03 4.27l2.52-1.96z" fill="#FBBC05"/>
-                    <path d="M12 5.73a6.27 6.27 0 0 1 3.4 1.15l2.58-2.58A9.96 9.96 0 0 0 12 3c-1.55 0-3.02.38-4.27 1.03l2.52 1.96c.78-.77 1.82-1.31 2.93-1.48z" fill="#EA4335"/>
-                  </svg>
-                  Google
-                </button>
-              </form>
-            </div>
+              </div>
+              
+              <button className="w-full flex items-center justify-center px-4 py-2 border border-gray-300 rounded-lg hover:bg-gray-100 transition">
+                <svg xmlns="http://www.w3.org/2000/svg" className="h-5 w-5 mr-2" viewBox="0 0 24 24">
+                  <path d="M22.56 12.25c0-.73-.06-1.44-.16-2.14H12v4.06h5.53a4.9 4.9 0 0 1-2.16 3.3v2.77h3.48c2.05-1.92 3.24-4.7 3.24-7.95z" fill="#4285F4"/>
+                  <path d="M12 23a9.99 9.99 0 0 0 6.84-2.53l-3.48-2.77a6.9 6.9 0 0 1-1.96.34c-2.53 0-4.67-1.72-5.45-4.01H3.73v2.62A9.96 9.96 0 0 0 12 23z" fill="#34A853"/>
+                  <path d="M5.55 15.17a6.84 6.84 0 0 1-.45-2.17c0-.75.11-1.48.29-2.17L3.73 8.21A9.96 9.96 0 0 0 3 12c0 1.55.38 3.02 1.03 4.27l2.52-1.96z" fill="#FBBC05"/>
+                  <path d="M12 5.73a6.27 6.27 0 0 1 3.4 1.15l2.58-2.58A9.96 9.96 0 0 0 12 3c-1.55 0-3.02.38-4.27 1.03l2.52 1.96c.78-.77 1.82-1.31 2.93-1.48z" fill="#EA4335"/>
+                </svg>
+                Google
+              </button>
+            </form>
           </div>
         </div>
       );
@@ -260,78 +178,33 @@
 
     const DashboardPage = ({ user, onLogout }) => {
       const [cameraActive, setCameraActive] = useState(false);
-      const [cameraError, setCameraError] = useState('');
       const [capturedImage, setCapturedImage] = useState(null);
       const [showPhotoOptions, setShowPhotoOptions] = useState(false);
-      const [detectionProgress, setDetectionProgress] = useState(0);
-      const [detectionResults, setDetectionResults] = useState([]);
-      const [showDetection, setShowDetection] = useState(false);
-      const [celebrityConfirmed, setCelebrityConfirmed] = useState(false);
-      const [confirmedCelebrity, setConfirmedCelebrity] = useState(null);
       
       const videoRef = useRef(null);
       const canvasRef = useRef(null);
 
-      const celebrityDatabase = [
-        { name: 'Leonardo DiCaprio', tier: 'Diamond', apy: 60, confidence: 0.98, color: '#B9F2FF' },
-        { name: 'Beyoncé', tier: 'Diamond', apy: 60, confidence: 0.97, color: '#B9F2FF' },
-        { name: 'Tom Hanks', tier: 'Diamond', apy: 60, confidence: 0.96, color: '#B9F2FF' },
-        { name: 'Jennifer Lawrence', tier: 'Diamond', apy: 60, confidence: 0.95, color: '#B9F2FF' },
-        { name: 'Brad Pitt', tier: 'Platinum', apy: 40, confidence: 0.93, color: '#E5E4E2' },
-        { name: 'Angelina Jolie', tier: 'Platinum', apy: 40, confidence: 0.92, color: '#E5E4E2' },
-        { name: 'Scarlett Johansson', tier: 'Gold', apy: 30, confidence: 0.84, color: '#FFD700' }
-      ];
-
       const startCamera = async () => {
-        setCameraError('');
-        setCapturedImage(null);
-        setDetectionResults([]);
-        setCelebrityConfirmed(false);
-        setConfirmedCelebrity(null);
+        setCameraActive(true);
         setShowPhotoOptions(true);
         
         try {
           if (!navigator.mediaDevices || !navigator.mediaDevices.getUserMedia) {
-            throw new Error('Camera API not supported in this browser');
+            throw new Error('Camera API not supported');
           }
           
           const stream = await navigator.mediaDevices.getUserMedia({
-            video: { 
-              facingMode: 'user',
-              width: { ideal: 1280 },
-              height: { ideal: 720 }
-            }
+            video: { facingMode: 'user', width: 1280, height: 720 }
           });
           
           if (videoRef.current) {
             videoRef.current.srcObject = stream;
-            videoRef.current.onloadedmetadata = () => {
-              try {
-                videoRef.current.play();
-                setCameraActive(true);
-              } catch (playError) {
-                console.error('Error playing video:', playError);
-                setCameraError('Failed to play video stream');
-              }
-            };
+            await videoRef.current.play();
           }
         } catch (err) {
-          setCameraActive(false);
-          setCameraError(err.message || 'Failed to access camera');
           console.error('Camera error:', err);
-          
-          setTimeout(() => {
-            if (err.name === 'NotAllowedError') {
-              alert('Camera access denied. Please allow camera access to use this feature.');
-            } else if (err.name === 'NotFoundError') {
-              alert('No camera found on this device.');
-            } else if (err.name === 'NotReadableError') {
-              alert('Camera is already in use by another application.');
-            } else {
-              alert(`Error accessing camera: ${err.message}`);
-            }
-          }, 100);
-          
+          alert('Failed to access camera. Please check permissions.');
+          setCameraActive(false);
           setShowPhotoOptions(false);
         }
       };
@@ -353,72 +226,15 @@
         const canvas = canvasRef.current;
         const context = canvas.getContext('2d');
         
-        // Set canvas dimensions to match video
         canvas.width = video.videoWidth || 640;
         canvas.height = video.videoHeight || 480;
         
-        // Draw video frame to canvas
         context.drawImage(video, 0, 0, canvas.width, canvas.height);
         
-        // Convert to image data URL
         const imageDataUrl = canvas.toDataURL('image/jpeg');
         setCapturedImage(imageDataUrl);
         
-        // Stop camera
         stopCamera();
-        
-        // Start detection after a short delay
-        setTimeout(startDetection, 500);
-      };
-
-      const startDetection = () => {
-        setShowDetection(true);
-        setDetectionProgress(0);
-        setDetectionResults([]);
-        
-        // Simulate AI detection process
-        let progress = 0;
-        const interval = setInterval(() => {
-          progress += 2;
-          setDetectionProgress(progress);
-          
-          if (progress === 20) {
-            // Face detection phase
-            setTimeout(() => {
-              // Randomly detect 1-3 people in the photo
-              const numPeople = Math.floor(Math.random() * 3) + 1;
-              const detectedPeople = [];
-              
-              for (let i = 0; i < numPeople; i++) {
-                // Randomly select a celebrity from the database
-                const randomIndex = Math.floor(Math.random() * celebrityDatabase.length);
-                detectedPeople.push(celebrityDatabase[randomIndex]);
-              }
-              
-              setDetectionResults(detectedPeople);
-            }, 500);
-          }
-          
-          if (progress === 100) {
-            clearInterval(interval);
-            setTimeout(() => {
-              setShowDetection(false);
-              setCelebrityConfirmed(true);
-            }, 1500);
-          }
-        }, 50);
-      };
-
-      const handleStakePhoto = () => {
-        alert('Photo staked successfully! You will start earning rewards immediately.');
-        setShowPhotoOptions(false);
-        setCapturedImage(null);
-      };
-
-      const handleMintNft = () => {
-        alert('NFT minting process would start here. For demo purposes, this is simulated.');
-        setShowPhotoOptions(false);
-        setCapturedImage(null);
       };
 
       return (
@@ -432,16 +248,13 @@
                 </div>
                 <div>
                   <h1 className="text-xl font-bold text-white">Meefie</h1>
-                  <p className="text-gray-400 text-sm">AI Celebrity Detection & Photo Staking</p>
+                  <p className="text-gray-400 text-sm">AI Celebrity Detection</p>
                 </div>
               </div>
               <div className="flex items-center space-x-4">
                 <div className="text-right">
                   <div className="text-sm text-gray-400">Balance</div>
                   <div className="font-bold text-yellow-400">500 MFT</div>
-                </div>
-                <div className="bg-gray-700 rounded-full px-4 py-2 flex items-center">
-                  <span className={`tier-badge ${user.tier.toLowerCase()}`}>{user.tier}</span>
                 </div>
                 <button 
                   onClick={onLogout}
@@ -458,7 +271,7 @@
             <section className="bg-gray-800 rounded-2xl shadow-xl p-6">
               <h2 className="text-2xl font-bold text-white mb-6">Capture & Detect Celebrities</h2>
               
-              {!showPhotoOptions && !cameraError && (
+              {!showPhotoOptions && (
                 <div className="text-center">
                   <div className="w-24 h-24 bg-blue-100 rounded-full flex items-center justify-center mx-auto mb-4">
                     <svg xmlns="http://www.w3.org/2000/svg" className="h-12 w-12 text-yellow-500" fill="none" viewBox="0 0 24 24" stroke="currentColor">
@@ -470,16 +283,10 @@
                   
                   <button
                     onClick={startCamera}
-                    className="btn-primary px-8 py-3"
+                    className="bg-gradient-to-r from-blue-500 to-cyan-500 text-white px-8 py-3 rounded-full font-semibold hover:opacity-90 transition"
                   >
                     Open Camera
                   </button>
-                </div>
-              )}
-
-              {cameraError && (
-                <div className="error-message">
-                  {cameraError}
                 </div>
               )}
 
@@ -507,120 +314,33 @@
                   <h3 className="text-lg font-semibold text-white mb-4">Your Captured Photo</h3>
                   <img src={capturedImage} alt="Captured" className="w-full rounded-xl shadow-lg mb-4" />
                   
-                  {showDetection && (
-                    <div className="mt-6">
-                      <h2 className="text-xl font-semibold text-center mb-4">AI Detection in Progress</h2>
-                      <div className="w-full bg-gray-700 rounded-full h-3 mb-3">
-                        <div 
-                          className="bg-gradient-to-r from-blue-500 to-cyan-500 h-3 rounded-full transition-all duration-300"
-                          style={{ width: `${detectionProgress}%` }}
-                        ></div>
-                      </div>
-                      <p className="text-center text-gray-400">
-                        {detectionProgress < 20 && "Initializing AI detection system..."}
-                        {detectionProgress >= 20 && detectionProgress < 40 && "Detecting faces in the photo..."}
-                        {detectionProgress >= 40 && detectionProgress < 70 && "Analyzing facial features..."}
-                        {detectionProgress >= 70 && detectionProgress < 90 && "Matching with celebrity database..."}
-                        {detectionProgress >= 90 && "Calculating confidence scores..."}
-                      </p>
-                    </div>
-                  )}
-
-                  {detectionResults.length > 0 && (
-                    <div className="mt-6">
-                      <h3 className="text-lg font-semibold text-white mb-4">AI Detection Results</h3>
-                      {detectionResults.map((celebrity, index) => (
-                        <div 
-                          key={index} 
-                          className="bg-gray-700 mb-4 p-4 rounded-lg cursor-pointer"
-                          onClick={() => {
-                            setConfirmedCelebrity(celebrity);
-                            setCelebrityConfirmed(true);
-                          }}
-                        >
-                          <div className="flex items-center">
-                            <div 
-                              className={`w-12 h-12 rounded-full flex items-center justify-center mr-4 ${celebrity.tier.toLowerCase()}`}
-                              style={{ 
-                                backgroundColor: celebrity.color,
-                                color: ['#CD7F32', '#C0C0C0', '#FFD700'].includes(celebrity.color) ? '#000' : '#000' 
-                              }}
-                            >
-                              {celebrity.name.charAt(0)}
-                            </div>
-                            <div className="flex-1">
-                              <h3 className="font-bold text-lg">{celebrity.name}</h3>
-                              <p className="text-sm text-gray-400">
-                                {celebrity.tier} Tier • {celebrity.apy}% APY
-                              </p>
-                            </div>
-                            <div className="text-right">
-                              <div className="text-xs text-gray-400 mb-1">Confidence</div>
-                              <div className="w-20 h-2 bg-gray-600 rounded-full overflow-hidden">
-                                <div 
-                                  className="h-full" 
-                                  style={{ 
-                                    width: `${Math.round(celebrity.confidence * 100)}%`, 
-                                    backgroundColor: celebrity.color 
-                                  }}
-                                ></div>
-                              </div>
-                              <div className="text-sm mt-1">
-                                {Math.round(celebrity.confidence * 100)}%
-                              </div>
-                            </div>
-                          </div>
-                        </div>
-                      ))}
-                    </div>
-                  )}
-
-                  {celebrityConfirmed && confirmedCelebrity && (
-                    <div className="mt-6">
-                      <h3 className="text-lg font-semibold text-white mb-4">Confirm Celebrity</h3>
-                      <div className="bg-gray-700 p-4 rounded-lg mb-4">
-                        <div className="flex items-center">
-                          <div 
-                            className={`w-16 h-16 rounded-full flex items-center justify-center mr-4 ${confirmedCelebrity.tier.toLowerCase()}`}
-                            style={{ 
-                              backgroundColor: confirmedCelebrity.color,
-                              color: ['#CD7F32', '#C0C0C0', '#FFD700'].includes(confirmedCelebrity.color) ? '#000' : '#000' 
-                            }}
-                          >
-                            <span className="text-2xl">{confirmedCelebrity.name.charAt(0)}</span>
-                          </div>
-                          <div>
-                            <h3 className="font-bold text-xl">{confirmedCelebrity.name}</h3>
-                            <p className="text-gray-400">
-                              {confirmedCelebrity.tier} Tier • {confirmedCelebrity.apy}% APY
-                            </p>
-                          </div>
-                        </div>
-                      </div>
-                      
-                      <div className="flex flex-col sm:flex-row gap-4">
-                        <button 
-                          onClick={handleStakePhoto}
-                          className="flex-1 bg-gradient-to-r from-blue-500 to-cyan-500 text-white px-6 py-3 rounded-xl font-semibold"
-                        >
-                          Stake & Earn
-                        </button>
-                        <button 
-                          onClick={handleMintNft}
-                          className="flex-1 bg-gradient-to-r from-yellow-500 to-orange-500 text-white px-6 py-3 rounded-xl font-semibold"
-                        >
-                          Mint as NFT
-                        </button>
-                      </div>
-                    </div>
-                  )}
+                  <div className="flex flex-col sm:flex-row gap-4">
+                    <button 
+                      onClick={() => {
+                        setCapturedImage(null);
+                        startCamera();
+                      }}
+                      className="flex-1 bg-gradient-to-r from-blue-500 to-cyan-500 text-white px-6 py-3 rounded-xl font-semibold"
+                    >
+                      Retake Photo
+                    </button>
+                    <button 
+                      onClick={() => {
+                        setCapturedImage(null);
+                        setShowPhotoOptions(false);
+                      }}
+                      className="flex-1 bg-gray-700 text-white px-6 py-3 rounded-xl font-semibold"
+                    >
+                      Cancel
+                    </button>
+                  </div>
                 </div>
               )}
               
-              {showPhotoOptions && !cameraActive && !capturedImage && !cameraError && (
-                <div className="camera-placeholder">
+              {showPhotoOptions && !cameraActive && !capturedImage && (
+                <div className="text-center">
                   <div className="loading-spinner mb-4"></div>
-                  <h3 className="text-xl font-bold mb-2">Accessing Camera</h3>
+                  <p className="text-xl font-bold mb-2">Accessing Camera</p>
                   <p className="text-gray-300">Please allow camera access when prompted</p>
                 </div>
               )}
