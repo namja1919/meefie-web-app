@@ -168,6 +168,33 @@
             margin: 15px 0;
             color: #d32f2f;
         }
+        .camera-loader {
+            position: absolute;
+            top: 0;
+            left: 0;
+            right: 0;
+            bottom: 0;
+            background: rgba(0, 0, 0, 0.7);
+            display: flex;
+            flex-direction: column;
+            justify-content: center;
+            align-items: center;
+            color: white;
+            z-index: 20;
+        }
+        .loader-spinner {
+            border: 4px solid rgba(255, 255, 255, 0.3);
+            border-radius: 50%;
+            border-top: 4px solid white;
+            width: 40px;
+            height: 40px;
+            animation: spin 1s linear infinite;
+            margin-bottom: 15px;
+        }
+        @keyframes spin {
+            0% { transform: rotate(0deg); }
+            100% { transform: rotate(360deg); }
+        }
     </style>
 </head>
 <body class="bg-gray-50">
@@ -181,6 +208,7 @@
             const [user, setUser] = React.useState(null);
             const [uploadedPhoto, setUploadedPhoto] = React.useState(null);
             const [cameraActive, setCameraActive] = React.useState(false);
+            const [cameraLoading, setCameraLoading] = React.useState(false);
             const [capturedImage, setCapturedImage] = React.useState(null);
             const [detectionResults, setDetectionResults] = React.useState([]);
             const [detectionProgress, setDetectionProgress] = React.useState(0);
@@ -192,7 +220,7 @@
             const [selectedPhoto, setSelectedPhoto] = React.useState(null);
             const [cameraError, setCameraError] = React.useState('');
             const [cameraStream, setCameraStream] = React.useState(null);
-            const [isProcessing, setIsProcessing] = React.useState(false);
+            const [currentView, setCurrentView] = React.useState('upload'); // 'upload' or 'camera'
             
             const videoRef = React.useRef(null);
             const canvasRef = React.useRef(null);
@@ -252,13 +280,14 @@
             
             const startCamera = async () => {
                 setCameraError('');
-                setIsProcessing(true);
+                setCameraLoading(true);
+                setCurrentView('camera');
                 
                 try {
                     // First check if camera is supported
                     if (!navigator.mediaDevices || !navigator.mediaDevices.getUserMedia) {
                         setCameraError('Camera access is not supported in your browser. Please try a modern browser like Chrome or Firefox.');
-                        setIsProcessing(false);
+                        setCameraLoading(false);
                         return;
                     }
                     
@@ -278,21 +307,24 @@
                         videoRef.current.onloadedmetadata = () => {
                             videoRef.current.play();
                             setCameraActive(true);
-                            setIsProcessing(false);
+                            setCameraLoading(false);
                         };
                     }
                 } catch (err) {
-                    setIsProcessing(false);
+                    setCameraLoading(false);
                     
                     if (err.name === 'NotAllowedError') {
                         setCameraError('Camera access denied. Please allow camera access to use this feature.');
                     } else if (err.name === 'NotFoundError') {
                         setCameraError('No camera found on this device.');
+                    } else if (err.name === 'NotReadableError') {
+                        setCameraError('Camera is already in use by another application.');
                     } else {
                         setCameraError(`Error accessing camera: ${err.message}`);
                     }
                     
                     console.error('Camera error:', err);
+                    setCurrentView('upload');
                 }
             };
             
@@ -302,6 +334,7 @@
                     setCameraStream(null);
                 }
                 setCameraActive(false);
+                setCurrentView('upload');
             };
             
             const capturePhoto = () => {
@@ -321,6 +354,7 @@
                 // Convert to image data URL
                 const imageDataUrl = canvas.toDataURL('image/jpeg');
                 setCapturedImage(imageDataUrl);
+                setUploadedPhoto(imageDataUrl);
                 
                 // Stop camera
                 stopCamera();
@@ -893,41 +927,26 @@
                                 <div className="bg-white rounded-2xl shadow-lg p-6">
                                     <h2 className="text-xl font-bold text-gray-800 mb-6">Capture & Detect Celebrities</h2>
                                     
-                                    {!cameraActive && !capturedImage && (
+                                    {currentView === 'upload' && !cameraActive && !capturedImage && (
                                         <div className="upload-area">
                                             <svg xmlns="http://www.w3.org/2000/svg" className="h-12 w-12 text-blue-500 mx-auto mb-4" fill="none" viewBox="0 0 24 24" stroke="currentColor">
                                                 <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M3 9a2 2 0 012-2h.93a2 2 0 001.664-.89l.812-1.22A2 2 0 0110.07 4h3.86a2 2 0 011.664.89l.812 1.22A2 2 0 0018.07 7H19a2 2 0 012 2v9a2 2 0 01-2 2H5a2 2 0 01-2-2V9z" />
                                             </svg>
                                             <h3 className="text-xl font-semibold text-gray-800 mb-2">Open Camera</h3>
                                             <p className="text-gray-600 mb-4">Use your device camera to capture moments with celebrities</p>
-                                            
                                             {cameraError && (
                                                 <div className="camera-error">
                                                     {cameraError}
                                                 </div>
                                             )}
-                                            
                                             <button 
                                                 onClick={startCamera}
                                                 className="btn-primary"
-                                                disabled={isProcessing}
                                             >
-                                                {isProcessing ? (
-                                                    <span className="flex items-center justify-center">
-                                                        <svg className="animate-spin -ml-1 mr-2 h-4 w-4 text-white" xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24">
-                                                            <circle className="opacity-25" cx="12" cy="12" r="10" stroke="currentColor" strokeWidth="4"></circle>
-                                                            <path className="opacity-75" fill="currentColor" d="M4 12a8 8 0 018-8V0C5.373 0 0 5.373 0 12h4zm2 5.291A7.962 7.962 0 014 12H0c0 3.042 1.135 5.824 3 7.938l3-2.647z"></path>
-                                                        </svg>
-                                                        Accessing Camera...
-                                                    </span>
-                                                ) : (
-                                                    <>
-                                                        <svg xmlns="http://www.w3.org/2000/svg" className="h-5 w-5 mr-2 inline" fill="none" viewBox="0 0 24 24" stroke="currentColor">
-                                                            <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M3 9a2 2 0 012-2h.93a2 2 0 001.664-.89l.812-1.22A2 2 0 0110.07 4h3.86a2 2 0 011.664.89l.812 1.22A2 2 0 0018.07 7H19a2 2 0 012 2v9a2 2 0 01-2 2H5a2 2 0 01-2-2V9z" />
-                                                        </svg>
-                                                        Open Camera
-                                                    </>
-                                                )}
+                                                <svg xmlns="http://www.w3.org/2000/svg" className="h-5 w-5 mr-2 inline" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+                                                    <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M3 9a2 2 0 012-2h.93a2 2 0 001.664-.89l.812-1.22A2 2 0 0110.07 4h3.86a2 2 0 011.664.89l.812 1.22A2 2 0 0018.07 7H19a2 2 0 012 2v9a2 2 0 01-2 2H5a2 2 0 01-2-2V9z" />
+                                                </svg>
+                                                Open Camera
                                             </button>
                                         </div>
                                     )}
@@ -953,6 +972,12 @@
                                                         <div className="capture-button" onClick={capturePhoto}></div>
                                                     </div>
                                                 </div>
+                                                {cameraLoading && (
+                                                    <div className="camera-loader">
+                                                        <div className="loader-spinner"></div>
+                                                        <p>Accessing camera...</p>
+                                                    </div>
+                                                )}
                                             </div>
                                         </div>
                                     )}
