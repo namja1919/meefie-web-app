@@ -3,13 +3,15 @@
 <head>
   <meta charset="UTF-8" />
   <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-  <title>Meefie - Login & Camera</title>
+  <title>Meefie - AI Celebrity Detection</title>
   <script src="https://cdn.tailwindcss.com"></script>
+  <link href="https://fonts.googleapis.com/css2?family=Poppins:wght@300;400;500;600;700&display=swap" rel="stylesheet">
   <script src="https://unpkg.com/react@18/umd/react.development.js"></script>
   <script src="https://unpkg.com/react-dom@18/umd/react-dom.development.js"></script>
   <script src="https://unpkg.com/@babel/standalone/babel.min.js"></script>
   <style>
     body {
+      font-family: 'Poppins', sans-serif;
       background: linear-gradient(135deg, #0f172a, #1e293b);
       color: white;
     }
@@ -23,6 +25,15 @@
       width: 100%;
       height: 400px;
       object-fit: cover;
+    }
+    .camera-controls {
+      position: absolute;
+      bottom: 20px;
+      left: 0;
+      right: 0;
+      display: flex;
+      justify-content: center;
+      gap: 20px;
     }
     .capture-button {
       width: 70px;
@@ -55,6 +66,19 @@
       cursor: pointer;
       z-index: 10;
     }
+    .camera-placeholder {
+      width: 100%;
+      height: 400px;
+      background: #1e293b;
+      border-radius: 12px;
+      display: flex;
+      flex-direction: column;
+      justify-content: center;
+      align-items: center;
+      color: white;
+      text-align: center;
+      padding: 20px;
+    }
     .loading-spinner {
       border: 4px solid rgba(255, 255, 255, 0.3);
       border-top: 4px solid #FFD700;
@@ -75,15 +99,63 @@
       border-radius: 8px;
       color: #d32f2f;
     }
+    .photo-preview {
+      max-width: 100%;
+      border-radius: 12px;
+      margin: 20px 0;
+    }
+    .tier-card {
+      background: #1e293b;
+      border-radius: 16px;
+      padding: 24px;
+      box-shadow: 0 4px 20px rgba(0, 0, 0, 0.15);
+      transition: all 0.3s ease;
+      border: 2px solid transparent;
+    }
+    .tier-card:hover {
+      transform: translateY(-5px);
+      border-color: #4facfe;
+    }
+    .tier-badge {
+      padding: 6px 16px;
+      border-radius: 50px;
+      font-weight: 600;
+      display: inline-block;
+    }
+    .starter { background: #f8f9fa; color: #6c757d; }
+    .explorer { background: #d1ecf1; color: #0c5460; }
+    .influencer { background: #d4edda; color: #155724; }
+    .elite { background: #fff3cd; color: #856404; }
+    .prestige { background: #f8d7da; color: #721c24; }
+    .bronze { background: #CD7F32; color: white; }
+    .silver { background: #C0C0C0; color: #000; }
+    .gold { background: #FFD700; color: #000; }
+    .platinum { background: #E5E4E2; color: #000; }
+    .diamond { background: #B9F2FF; color: #000; }
+    .staked-photo {
+      background: #1e293b;
+      border-radius: 12px;
+      padding: 16px;
+      display: flex;
+      align-items: center;
+      margin-bottom: 16px;
+    }
+    .staked-photo img {
+      width: 60px;
+      height: 60px;
+      border-radius: 10px;
+      object-fit: cover;
+      margin-right: 16px;
+    }
   </style>
 </head>
 <body>
   <div id="root"></div>
-
+  
   <script type="text/babel">
     const { useState, useRef, useEffect } = React;
 
-    const LoginPage = ({ onLogin }) => {
+    const LoginPage = ({ onLogin, onNavigateToSignup }) => {
       const [email, setEmail] = useState('');
       const [password, setPassword] = useState('');
       const [error, setError] = useState('');
@@ -91,86 +163,203 @@
       const handleLogin = (e) => {
         e.preventDefault();
         
+        // Simple validation
+        if (!email || !password) {
+          setError('Please enter both email and password');
+          return;
+        }
+        
         // Simulate login
         setTimeout(() => {
           onLogin({
             name: 'John Doe',
             wallet: '0x123...abc',
             email: email,
-            tier: 'Explorer'
+            tier: 'Starter'
           });
         }, 500);
       };
 
       return (
         <div className="min-h-screen flex items-center justify-center p-4 bg-gray-900">
-          <div className="w-full max-w-md bg-white rounded-2xl shadow-xl p-8">
+          <div className="w-full max-w-md">
             <div className="text-center mb-8">
-              <div className="w-16 h-16 bg-gradient-to-r from-blue-400 to-cyan-400 rounded-full flex items-center justify-center mx-auto mb-4">
-                <span className="text-white font-bold text-2xl">M</span>
+              <div className="w-20 h-20 bg-gradient-to-r from-blue-400 to-cyan-400 rounded-full flex items-center justify-center mx-auto mb-4">
+                <span className="text-white font-bold text-3xl">M</span>
               </div>
-              <h1 className="text-3xl font-bold text-gray-800">Welcome to Meefie</h1>
-              <p className="text-gray-500">Login to your account</p>
+              <h1 className="text-3xl font-bold text-white mb-2">Meefie</h1>
+              <p className="text-gray-400">Login to your account</p>
             </div>
             
-            <form onSubmit={handleLogin} className="space-y-6">
+            <div className="bg-gray-800 rounded-2xl p-8 shadow-xl">
               {error && (
                 <div className="error-message mb-4">
                   {error}
                 </div>
               )}
               
-              <div>
-                <label className="block text-sm font-medium text-gray-700 mb-2">Email</label>
-                <input
-                  type="email"
-                  className="w-full px-4 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-yellow-500"
-                  placeholder="Enter your email"
-                  value={email}
-                  onChange={(e) => setEmail(e.target.value)}
-                />
-              </div>
-              
-              <div>
-                <label className="block text-sm font-medium text-gray-700 mb-2">Password</label>
-                <input
-                  type="password"
-                  className="w-full px-4 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-yellow-500"
-                  placeholder="Enter your password"
-                  value={password}
-                  onChange={(e) => setPassword(e.target.value)}
-                />
-              </div>
-              
-              <button type="submit" className="bg-gradient-to-r from-yellow-500 to-orange-500 text-white px-6 py-3 rounded-lg w-full hover:opacity-90 transition">
-                Sign In
-              </button>
-              
-              <div className="text-center mt-4">
-                <p className="text-gray-500">
-                  Don't have an account? <span className="text-yellow-500 font-medium cursor-pointer">Sign up</span>
-                </p>
-              </div>
-              
-              <div className="relative mt-6">
-                <div className="absolute inset-0 flex items-center">
-                  <div className="w-full border-t border-gray-300"></div>
+              <form onSubmit={handleLogin} className="space-y-6">
+                <div>
+                  <label className="block text-sm font-medium text-gray-300 mb-2">Email</label>
+                  <input
+                    type="email"
+                    className="w-full px-4 py-2 border border-gray-600 rounded-lg bg-gray-700 focus:ring-2 focus:ring-blue-500 focus:border-blue-500"
+                    placeholder="Enter your email"
+                    value={email}
+                    onChange={(e) => setEmail(e.target.value)}
+                  />
                 </div>
-                <div className="relative flex justify-center text-sm">
-                  <span className="px-2 bg-white text-gray-500">Or continue with</span>
+                
+                <div>
+                  <label className="block text-sm font-medium text-gray-300 mb-2">Password</label>
+                  <input
+                    type="password"
+                    className="w-full px-4 py-2 border border-gray-600 rounded-lg bg-gray-700 focus:ring-2 focus:ring-blue-500 focus:border-blue-500"
+                    placeholder="Enter your password"
+                    value={password}
+                    onChange={(e) => setPassword(e.target.value)}
+                  />
                 </div>
+                
+                <button type="submit" className="bg-gradient-to-r from-blue-500 to-cyan-500 text-white px-6 py-3 rounded-lg w-full hover:opacity-90 transition">
+                  Sign In
+                </button>
+                
+                <div className="text-center mt-4">
+                  <p className="text-gray-400">
+                    Don't have an account?{' '}
+                    <span 
+                      className="text-blue-400 font-medium cursor-pointer hover:underline"
+                      onClick={onNavigateToSignup}
+                    >
+                      Sign up
+                    </span>
+                  </p>
+                </div>
+              </form>
+            </div>
+          </div>
+        </div>
+      );
+    };
+
+    const SignupPage = ({ onSignup, onNavigateToLogin }) => {
+      const [name, setName] = useState('');
+      const [email, setEmail] = useState('');
+      const [password, setPassword] = useState('');
+      const [confirmPassword, setConfirmPassword] = useState('');
+      const [error, setError] = useState('');
+
+      const handleSignup = (e) => {
+        e.preventDefault();
+        
+        // Validation
+        if (!name || !email || !password || !confirmPassword) {
+          setError('Please fill in all fields');
+          return;
+        }
+        
+        if (password !== confirmPassword) {
+          setError('Passwords do not match');
+          return;
+        }
+        
+        if (password.length < 6) {
+          setError('Password must be at least 6 characters');
+          return;
+        }
+        
+        // Simulate signup
+        setTimeout(() => {
+          onSignup({
+            name: name,
+            wallet: '0x123...abc',
+            email: email,
+            tier: 'Starter'
+          });
+        }, 500);
+      };
+
+      return (
+        <div className="min-h-screen flex items-center justify-center p-4 bg-gray-900">
+          <div className="w-full max-w-md">
+            <div className="text-center mb-8">
+              <div className="w-20 h-20 bg-gradient-to-r from-blue-400 to-cyan-400 rounded-full flex items-center justify-center mx-auto mb-4">
+                <span className="text-white font-bold text-3xl">M</span>
               </div>
+              <h1 className="text-3xl font-bold text-white mb-2">Meefie</h1>
+              <p className="text-gray-400">Create your account</p>
+            </div>
+            
+            <div className="bg-gray-800 rounded-2xl p-8 shadow-xl">
+              {error && (
+                <div className="error-message mb-4">
+                  {error}
+                </div>
+              )}
               
-              <button className="w-full flex items-center justify-center px-4 py-2 border border-gray-300 rounded-lg hover:bg-gray-100 transition">
-                <svg xmlns="http://www.w3.org/2000/svg" className="h-5 w-5 mr-2" viewBox="0 0 24 24">
-                  <path d="M22.56 12.25c0-.73-.06-1.44-.16-2.14H12v4.06h5.53a4.9 4.9 0 0 1-2.16 3.3v2.77h3.48c2.05-1.92 3.24-4.7 3.24-7.95z" fill="#4285F4"/>
-                  <path d="M12 23a9.99 9.99 0 0 0 6.84-2.53l-3.48-2.77a6.9 6.9 0 0 1-1.96.34c-2.53 0-4.67-1.72-5.45-4.01H3.73v2.62A9.96 9.96 0 0 0 12 23z" fill="#34A853"/>
-                  <path d="M5.55 15.17a6.84 6.84 0 0 1-.45-2.17c0-.75.11-1.48.29-2.17L3.73 8.21A9.96 9.96 0 0 0 3 12c0 1.55.38 3.02 1.03 4.27l2.52-1.96z" fill="#FBBC05"/>
-                  <path d="M12 5.73a6.27 6.27 0 0 1 3.4 1.15l2.58-2.58A9.96 9.96 0 0 0 12 3c-1.55 0-3.02.38-4.27 1.03l2.52 1.96c.78-.77 1.82-1.31 2.93-1.48z" fill="#EA4335"/>
-                </svg>
-                Google
-              </button>
-            </form>
+              <form onSubmit={handleSignup} className="space-y-6">
+                <div>
+                  <label className="block text-sm font-medium text-gray-300 mb-2">Full Name</label>
+                  <input
+                    type="text"
+                    className="w-full px-4 py-2 border border-gray-600 rounded-lg bg-gray-700 focus:ring-2 focus:ring-blue-500 focus:border-blue-500"
+                    placeholder="Enter your full name"
+                    value={name}
+                    onChange={(e) => setName(e.target.value)}
+                  />
+                </div>
+                
+                <div>
+                  <label className="block text-sm font-medium text-gray-300 mb-2">Email</label>
+                  <input
+                    type="email"
+                    className="w-full px-4 py-2 border border-gray-600 rounded-lg bg-gray-700 focus:ring-2 focus:ring-blue-500 focus:border-blue-500"
+                    placeholder="Enter your email"
+                    value={email}
+                    onChange={(e) => setEmail(e.target.value)}
+                  />
+                </div>
+                
+                <div>
+                  <label className="block text-sm font-medium text-gray-300 mb-2">Password</label>
+                  <input
+                    type="password"
+                    className="w-full px-4 py-2 border border-gray-600 rounded-lg bg-gray-700 focus:ring-2 focus:ring-blue-500 focus:border-blue-500"
+                    placeholder="Create a password"
+                    value={password}
+                    onChange={(e) => setPassword(e.target.value)}
+                  />
+                </div>
+                
+                <div>
+                  <label className="block text-sm font-medium text-gray-300 mb-2">Confirm Password</label>
+                  <input
+                    type="password"
+                    className="w-full px-4 py-2 border border-gray-600 rounded-lg bg-gray-700 focus:ring-2 focus:ring-blue-500 focus:border-blue-500"
+                    placeholder="Confirm your password"
+                    value={confirmPassword}
+                    onChange={(e) => setConfirmPassword(e.target.value)}
+                  />
+                </div>
+                
+                <button type="submit" className="bg-gradient-to-r from-blue-500 to-cyan-500 text-white px-6 py-3 rounded-lg w-full hover:opacity-90 transition">
+                  Create Account
+                </button>
+                
+                <div className="text-center mt-4">
+                  <p className="text-gray-400">
+                    Already have an account?{' '}
+                    <span 
+                      className="text-blue-400 font-medium cursor-pointer hover:underline"
+                      onClick={onNavigateToLogin}
+                    >
+                      Sign in
+                    </span>
+                  </p>
+                </div>
+              </form>
+            </div>
           </div>
         </div>
       );
@@ -178,33 +367,89 @@
 
     const DashboardPage = ({ user, onLogout }) => {
       const [cameraActive, setCameraActive] = useState(false);
+      const [cameraError, setCameraError] = useState('');
       const [capturedImage, setCapturedImage] = useState(null);
       const [showPhotoOptions, setShowPhotoOptions] = useState(false);
+      const [detectionProgress, setDetectionProgress] = useState(0);
+      const [detectionResults, setDetectionResults] = useState([]);
+      const [showDetection, setShowDetection] = useState(false);
+      const [celebrityConfirmed, setCelebrityConfirmed] = useState(false);
+      const [confirmedCelebrity, setConfirmedCelebrity] = useState(null);
+      const [walletConnected, setWalletConnected] = useState(false);
+      const [userTier, setUserTier] = useState(user.tier);
+      const [userMftBalance, setUserMftBalance] = useState(500);
       
       const videoRef = useRef(null);
       const canvasRef = useRef(null);
 
+      const celebrityDatabase = [
+        { name: 'Leonardo DiCaprio', tier: 'Diamond', apy: 60, confidence: 0.98, color: '#B9F2FF' },
+        { name: 'Beyoncé', tier: 'Diamond', apy: 60, confidence: 0.97, color: '#B9F2FF' },
+        { name: 'Tom Hanks', tier: 'Diamond', apy: 60, confidence: 0.96, color: '#B9F2FF' },
+        { name: 'Jennifer Lawrence', tier: 'Diamond', apy: 60, confidence: 0.95, color: '#B9F2FF' },
+        { name: 'Brad Pitt', tier: 'Platinum', apy: 40, confidence: 0.93, color: '#E5E4E2' },
+        { name: 'Angelina Jolie', tier: 'Platinum', apy: 40, confidence: 0.92, color: '#E5E4E2' },
+        { name: 'Scarlett Johansson', tier: 'Gold', apy: 30, confidence: 0.84, color: '#FFD700' }
+      ];
+
+      const tierInfo = {
+        'Starter': { maxStakes: 0, fee: 0, apy: 0 },
+        'Explorer': { maxStakes: 2, fee: 20, apy: 10 },
+        'Influencer': { maxStakes: 5, fee: 50, apy: 20 },
+        'Elite': { maxStakes: 10, fee: 100, apy: 30 },
+        'Prestige': { maxStakes: Infinity, fee: 500, apy: 50 }
+      };
+
       const startCamera = async () => {
-        setCameraActive(true);
+        setCameraError('');
+        setCapturedImage(null);
+        setDetectionResults([]);
+        setCelebrityConfirmed(false);
+        setConfirmedCelebrity(null);
         setShowPhotoOptions(true);
         
         try {
           if (!navigator.mediaDevices || !navigator.mediaDevices.getUserMedia) {
-            throw new Error('Camera API not supported');
+            throw new Error('Camera API not supported in this browser');
           }
           
           const stream = await navigator.mediaDevices.getUserMedia({
-            video: { facingMode: 'user', width: 1280, height: 720 }
+            video: { 
+              facingMode: 'user',
+              width: { ideal: 1280 },
+              height: { ideal: 720 }
+            }
           });
           
           if (videoRef.current) {
             videoRef.current.srcObject = stream;
-            await videoRef.current.play();
+            videoRef.current.onloadedmetadata = () => {
+              try {
+                videoRef.current.play();
+                setCameraActive(true);
+              } catch (playError) {
+                console.error('Error playing video:', playError);
+                setCameraError('Failed to play video stream');
+              }
+            };
           }
         } catch (err) {
-          console.error('Camera error:', err);
-          alert('Failed to access camera. Please check permissions.');
           setCameraActive(false);
+          setCameraError(err.message || 'Failed to access camera');
+          console.error('Camera error:', err);
+          
+          setTimeout(() => {
+            if (err.name === 'NotAllowedError') {
+              alert('Camera access denied. Please allow camera access to use this feature.');
+            } else if (err.name === 'NotFoundError') {
+              alert('No camera found on this device.');
+            } else if (err.name === 'NotReadableError') {
+              alert('Camera is already in use by another application.');
+            } else {
+              alert(`Error accessing camera: ${err.message}`);
+            }
+          }, 100);
+          
           setShowPhotoOptions(false);
         }
       };
@@ -226,15 +471,108 @@
         const canvas = canvasRef.current;
         const context = canvas.getContext('2d');
         
+        // Set canvas dimensions to match video
         canvas.width = video.videoWidth || 640;
         canvas.height = video.videoHeight || 480;
         
+        // Draw video frame to canvas
         context.drawImage(video, 0, 0, canvas.width, canvas.height);
         
+        // Convert to image data URL
         const imageDataUrl = canvas.toDataURL('image/jpeg');
         setCapturedImage(imageDataUrl);
         
+        // Stop camera
         stopCamera();
+        
+        // Start detection after a short delay
+        setTimeout(startDetection, 500);
+      };
+
+      const startDetection = () => {
+        setShowDetection(true);
+        setDetectionProgress(0);
+        setDetectionResults([]);
+        
+        // Simulate AI detection process
+        let progress = 0;
+        const interval = setInterval(() => {
+          progress += 2;
+          setDetectionProgress(progress);
+          
+          if (progress === 20) {
+            // Face detection phase
+            setTimeout(() => {
+              // Randomly detect 1-3 people in the photo
+              const numPeople = Math.floor(Math.random() * 3) + 1;
+              const detectedPeople = [];
+              
+              for (let i = 0; i < numPeople; i++) {
+                // Randomly select a celebrity from the database
+                const randomIndex = Math.floor(Math.random() * celebrityDatabase.length);
+                detectedPeople.push(celebrityDatabase[randomIndex]);
+              }
+              
+              setDetectionResults(detectedPeople);
+            }, 500);
+          }
+          
+          if (progress === 100) {
+            clearInterval(interval);
+            setTimeout(() => {
+              setShowDetection(false);
+              setCelebrityConfirmed(true);
+            }, 1500);
+          }
+        }, 50);
+      };
+
+      const handleStakePhoto = () => {
+        // Check if user can stake
+        const currentTierInfo = tierInfo[userTier];
+        
+        if (currentTierInfo.maxStakes === 0) {
+          alert(`Your ${userTier} tier doesn't allow staking. Please upgrade to a higher tier.`);
+          return;
+        }
+        
+        if (userMftBalance < currentTierInfo.fee && currentTierInfo.fee > 0) {
+          alert(`Insufficient MFT balance. You need ${currentTierInfo.fee} MFT to stake a photo with your ${userTier} tier.`);
+          return;
+        }
+        
+        if (currentTierInfo.fee > 0) {
+          setUserMftBalance(userMftBalance - currentTierInfo.fee);
+        }
+        
+        alert('Photo staked successfully! You will start earning rewards immediately.');
+        setShowPhotoOptions(false);
+        setCapturedImage(null);
+      };
+
+      const handleMintNft = () => {
+        alert('NFT minting process would start here. For demo purposes, this is simulated.');
+        setShowPhotoOptions(false);
+        setCapturedImage(null);
+      };
+
+      const connectWallet = () => {
+        setWalletConnected(!walletConnected);
+        if (!walletConnected) {
+          alert('Wallet connected successfully!');
+        }
+      };
+
+      const upgradeTier = (newTier) => {
+        const tier = tierInfo[newTier];
+        if (userMftBalance < tier.fee) {
+          alert(`Insufficient MFT balance. You need ${tier.fee} MFT to upgrade to ${newTier} tier.`);
+          return;
+        }
+        
+        setUserMftBalance(userMftBalance - tier.fee);
+        setUserTier(newTier);
+        alert(`Successfully upgraded to ${newTier} tier!`);
       };
 
       return (
@@ -248,13 +586,26 @@
                 </div>
                 <div>
                   <h1 className="text-xl font-bold text-white">Meefie</h1>
-                  <p className="text-gray-400 text-sm">AI Celebrity Detection</p>
+                  <p className="text-gray-400 text-sm">AI Celebrity Detection & Photo Staking</p>
                 </div>
               </div>
               <div className="flex items-center space-x-4">
                 <div className="text-right">
                   <div className="text-sm text-gray-400">Balance</div>
-                  <div className="font-bold text-yellow-400">500 MFT</div>
+                  <div className="font-bold text-yellow-400">{userMftBalance} MFT</div>
+                </div>
+                <button 
+                  onClick={connectWallet}
+                  className={`px-4 py-2 rounded-full transition ${
+                    walletConnected 
+                      ? 'bg-green-500/20 text-green-400' 
+                      : 'bg-blue-500/20 text-blue-400 hover:bg-blue-500/30'
+                  }`}
+                >
+                  {walletConnected ? 'Wallet Connected' : 'Connect Wallet'}
+                </button>
+                <div className="bg-gray-700 rounded-full px-4 py-2 flex items-center">
+                  <span className={`tier-badge ${userTier.toLowerCase()}`}>{userTier}</span>
                 </div>
                 <button 
                   onClick={onLogout}
@@ -266,87 +617,554 @@
             </div>
           </header>
 
-          {/* Main Content */}
           <main className="container mx-auto px-4 py-8">
-            <section className="bg-gray-800 rounded-2xl shadow-xl p-6">
-              <h2 className="text-2xl font-bold text-white mb-6">Capture & Detect Celebrities</h2>
-              
-              {!showPhotoOptions && (
-                <div className="text-center">
-                  <div className="w-24 h-24 bg-blue-100 rounded-full flex items-center justify-center mx-auto mb-4">
-                    <svg xmlns="http://www.w3.org/2000/svg" className="h-12 w-12 text-yellow-500" fill="none" viewBox="0 0 24 24" stroke="currentColor">
-                      <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M3 9a2 2 0 012-2h.93a2 2 0 001.664-.89l.812-1.22A2 2 0 0110.07 4h3.86a2 2 0 011.664.89l.812 1.22A2 2 0 0018.07 7H19a2 2 0 012 2v9a2 2 0 01-2 2H5a2 2 0 01-2-2V9z" />
-                    </svg>
-                  </div>
-                  <h3 className="text-xl font-bold text-white mb-4">Capture Moment</h3>
-                  <p className="text-gray-300 mb-6">Take a photo with a celebrity using your device camera</p>
-                  
-                  <button
-                    onClick={startCamera}
-                    className="bg-gradient-to-r from-blue-500 to-cyan-500 text-white px-8 py-3 rounded-full font-semibold hover:opacity-90 transition"
-                  >
-                    Open Camera
-                  </button>
-                </div>
-              )}
-
-              {cameraActive && (
-                <div className="camera-container">
-                  <video 
-                    ref={videoRef} 
-                    autoPlay 
-                    playsInline 
-                    className="camera-video"
-                  />
-                  <div className="camera-controls">
-                    <div className="cancel-button" onClick={stopCamera}>
-                      <svg xmlns="http://www.w3.org/2000/svg" className="h-5 w-5 text-white" fill="none" viewBox="0 0 24 24" stroke="currentColor">
-                        <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M6 18L18 6M6 6l12 12" />
+            {/* How Staking Works */}
+            <section className="mb-12">
+              <div className="bg-gray-800 rounded-2xl p-6">
+                <h2 className="text-2xl font-bold text-white mb-6">How Staking Works</h2>
+                <div className="grid md:grid-cols-4 gap-6">
+                  <div className="text-center p-4 bg-gray-700 rounded-xl">
+                    <div className="w-12 h-12 bg-blue-500 rounded-full flex items-center justify-center mx-auto mb-3">
+                      <svg xmlns="http://www.w3.org/2000/svg" className="h-6 w-6 text-white" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+                        <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M3 9a2 2 0 012-2h.93a2 2 0 001.664-.89l.812-1.22A2 2 0 0110.07 4h3.86a2 2 0 011.664.89l.812 1.22A2 2 0 0018.07 7H19a2 2 0 012 2v9a2 2 0 01-2 2H5a2 2 0 01-2-2V9z" />
                       </svg>
                     </div>
-                    <div className="capture-button" onClick={capturePhoto}></div>
+                    <h3 className="font-semibold text-white mb-2">Capture Photo</h3>
+                    <p className="text-gray-300">Use camera to capture photo with celebrity</p>
                   </div>
-                </div>
-              )}
-
-              {capturedImage && (
-                <div className="mt-6">
-                  <h3 className="text-lg font-semibold text-white mb-4">Your Captured Photo</h3>
-                  <img src={capturedImage} alt="Captured" className="w-full rounded-xl shadow-lg mb-4" />
                   
-                  <div className="flex flex-col sm:flex-row gap-4">
-                    <button 
-                      onClick={() => {
-                        setCapturedImage(null);
-                        startCamera();
-                      }}
-                      className="flex-1 bg-gradient-to-r from-blue-500 to-cyan-500 text-white px-6 py-3 rounded-xl font-semibold"
-                    >
-                      Retake Photo
-                    </button>
-                    <button 
-                      onClick={() => {
-                        setCapturedImage(null);
-                        setShowPhotoOptions(false);
-                      }}
-                      className="flex-1 bg-gray-700 text-white px-6 py-3 rounded-xl font-semibold"
-                    >
-                      Cancel
-                    </button>
+                  <div className="text-center p-4 bg-gray-700 rounded-xl">
+                    <div className="w-12 h-12 bg-blue-500 rounded-full flex items-center justify-center mx-auto mb-3">
+                      <svg xmlns="http://www.w3.org/2000/svg" className="h-6 w-6 text-white" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+                        <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M21 21l-6-6m2-5a7 7 0 11-14 0 7 7 0 0114 0z" />
+                      </svg>
+                    </div>
+                    <h3 className="font-semibold text-white mb-2">AI Detection</h3>
+                    <p className="text-gray-300">AI detects celebrities and their tier</p>
+                  </div>
+                  
+                  <div className="text-center p-4 bg-gray-700 rounded-xl">
+                    <div className="w-12 h-12 bg-blue-500 rounded-full flex items-center justify-center mx-auto mb-3">
+                      <svg xmlns="http://www.w3.org/2000/svg" className="h-6 w-6 text-white" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+                        <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M12 8c-1.657 0-3 .895-3 2s1.343 2 3 2 3 .895 3 2-1.343 2-3 2m0-8c1.11 0 2.08.402 2.599 1M12 8V7m0 1v8m0 0v1m0-1c-1.11 0-2.08-.402-2.599-1M21 12a9 9 0 11-18 0 9 9 0 0118 0z" />
+                      </svg>
+                    </div>
+                    <h3 className="font-semibold text-white mb-2">Stake Photo</h3>
+                    <p className="text-gray-300">Stake photo based on celebrity tier</p>
+                  </div>
+                  
+                  <div className="text-center p-4 bg-gray-700 rounded-xl">
+                    <div className="w-12 h-12 bg-blue-500 rounded-full flex items-center justify-center mx-auto mb-3">
+                      <svg xmlns="http://www.w3.org/2000/svg" className="h-6 w-6 text-white" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+                        <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M12 8c-1.657 0-3 .895-3 2s1.343 2 3 2 3 .895 3 2-1.343 2-3 2m0-8c1.11 0 2.08.402 2.599 1M12 8V7m0 1v8m0 0v1m0-1c-1.11 0-2.08-.402-2.599-1M21 12a9 9 0 11-18 0 9 9 0 0118 0z" />
+                      </svg>
+                    </div>
+                    <h3 className="font-semibold text-white mb-2">Earn Rewards</h3>
+                    <p className="text-gray-300">Earn $MFT tokens with tier-based APY</p>
                   </div>
                 </div>
-              )}
-              
-              {showPhotoOptions && !cameraActive && !capturedImage && (
-                <div className="text-center">
-                  <div className="loading-spinner mb-4"></div>
-                  <p className="text-xl font-bold mb-2">Accessing Camera</p>
-                  <p className="text-gray-300">Please allow camera access when prompted</p>
+              </div>
+            </section>
+
+            {/* Your Staked Photos */}
+            <section className="mb-12">
+              <div className="bg-gray-800 rounded-2xl p-6">
+                <h2 className="text-2xl font-bold text-white mb-6">Your Staked Photos</h2>
+                
+                <div className="bg-gray-700 rounded-xl p-6">
+                  <div className="text-center">
+                    <h3 className="text-lg font-bold text-white mb-2">Tier: {userTier}</h3>
+                    <p className="text-gray-300 mb-4">No staked photos yet</p>
+                    <p className="text-gray-400">Capture a photo with a celebrity to start earning</p>
+                  </div>
                 </div>
-              )}
-              
-              {/* Hidden canvas for photo capture */}
-              <canvas ref={canvasRef} style={{ display: 'none' }}></canvas>
+              </div>
+            </section>
+
+            {/* Profile Tiers */}
+            <section className="mb-12">
+              <div className="bg-gray-800 rounded-2xl p-6">
+                <h2 className="text-2xl font-bold text-white mb-6">Profile Tier Upgrades</h2>
+                
+                <div className="grid md:grid-cols-4 gap-6">
+                  <div className={`tier-card ${userTier === 'Explorer' ? 'border-blue-500' : ''}`}>
+                    <h3 className="text-2xl font-bold text-white mb-2">Explorer</h3>
+                    <div className="tier-badge explorer mb-2">EXPLORER</div>
+                    <div className="text-3xl font-bold text-yellow-400 mb-2">20 MFT</div>
+                    <p className="text-gray-400 mb-4">Upgrade Fee</p>
+                    <ul className="text-left text-gray-300 space-y-2">
+                      <li className="flex items-center">
+                        <svg className="h-4 w-4 mr-2 text-green-500" fill="currentColor" viewBox="0 0 20 20">
+                          <path fillRule="evenodd" d="M16.707 5.293a1 1 0 010 1.414l-8 8a1 1 0 01-1.414 0l-4-4a1 1 0 011.414-1.414L8 12.586l7.293-7.293a1 1 0 011.414 0z" clipRule="evenodd" />
+                        </svg>
+                        Up to 2 stakes
+                      </li>
+                      <li className="flex items-center">
+                        <svg className="h-4 w-4 mr-2 text-green-500" fill="currentColor" viewBox="0 0 20 20">
+                          <path fillRule="evenodd" d="M16.707 5.293a1 1 0 010 1.414l-8 8a1 1 0 01-1.414 0l-4-4a1 1 0 011.414-1.414L8 12.586l7.293-7.293a1 1 0 011.414 0z" clipRule="evenodd" />
+                        </svg>
+                        Basic staking rewards
+                      </li>
+                      <li className="flex items-center">
+                        <svg className="h-4 w-4 mr-2 text-green-500" fill="currentColor" viewBox="0 0 20 20">
+                          <path fillRule="evenodd" d="M16.707 5.293a1 1 0 010 1.414l-8 8a1 1 0 01-1.414 0l-4-4a1 1 0 011.414-1.414L8 12.586l7.293-7.293a1 1 0 011.414 0z" clipRule="evenodd" />
+                        </svg>
+                        Platform access
+                      </li>
+                    </ul>
+                    {userTier !== 'Explorer' && (
+                      <button
+                        onClick={() => upgradeTier('Explorer')}
+                        className="mt-4 bg-gradient-to-r from-blue-500 to-cyan-500 text-white px-4 py-2 rounded-full w-full hover:opacity-90 transition"
+                      >
+                        Upgrade to Explorer
+                      </button>
+                    )}
+                  </div>
+                  
+                  <div className={`tier-card ${userTier === 'Influencer' ? 'border-green-500' : ''}`}>
+                    <h3 className="text-2xl font-bold text-white mb-2">Influencer</h3>
+                    <div className="tier-badge influencer mb-2">INFLUENCER</div>
+                    <div className="text-3xl font-bold text-yellow-400 mb-2">50 MFT</div>
+                    <p className="text-gray-400 mb-4">Upgrade Fee</p>
+                    <ul className="text-left text-gray-300 space-y-2">
+                      <li className="flex items-center">
+                        <svg className="h-4 w-4 mr-2 text-green-500" fill="currentColor" viewBox="0 0 20 20">
+                          <path fillRule="evenodd" d="M16.707 5.293a1 1 0 010 1.414l-8 8a1 1 0 01-1.414 0l-4-4a1 1 0 011.414-1.414L8 12.586l7.293-7.293a1 1 0 011.414 0z" clipRule="evenodd" />
+                        </svg>
+                        Up to 5 stakes
+                      </li>
+                      <li className="flex items-center">
+                        <svg className="h-4 w-4 mr-2 text-green-500" fill="currentColor" viewBox="0 0 20 20">
+                          <path fillRule="evenodd" d="M16.707 5.293a1 1 0 010 1.414l-8 8a1 1 0 01-1.414 0l-4-4a1 1 0 011.414-1.414L8 12.586l7.293-7.293a1 1 0 011.414 0z" clipRule="evenodd" />
+                        </svg>
+                        Enhanced rewards
+                      </li>
+                      <li className="flex items-center">
+                        <svg className="h-4 w-4 mr-2 text-green-500" fill="currentColor" viewBox="0 0 20 20">
+                          <path fillRule="evenodd" d="M16.707 5.293a1 1 0 010 1.414l-8 8a1 1 0 01-1.414 0l-4-4a1 1 0 011.414-1.414L8 12.586l7.293-7.293a1 1 0 011.414 0z" clipRule="evenodd" />
+                        </svg>
+                        Online events access
+                      </li>
+                    </ul>
+                    {userTier !== 'Influencer' && (
+                      <button
+                        onClick={() => upgradeTier('Influencer')}
+                        className="mt-4 bg-gradient-to-r from-green-500 to-blue-500 text-white px-4 py-2 rounded-full w-full hover:opacity-90 transition"
+                      >
+                        Upgrade to Influencer
+                      </button>
+                    )}
+                  </div>
+                  
+                  <div className={`tier-card ${userTier === 'Elite' ? 'border-yellow-500' : ''}`}>
+                    <h3 className="text-2xl font-bold text-white mb-2">Elite</h3>
+                    <div className="tier-badge elite mb-2">ELITE</div>
+                    <div className="text-3xl font-bold text-yellow-400 mb-2">100 MFT</div>
+                    <p className="text-gray-400 mb-4">Upgrade Fee</p>
+                    <ul className="text-left text-gray-300 space-y-2">
+                      <li className="flex items-center">
+                        <svg className="h-4 w-4 mr-2 text-green-500" fill="currentColor" viewBox="0 0 20 20">
+                          <path fillRule="evenodd" d="M16.707 5.293a1 1 0 010 1.414l-8 8a1 1 0 01-1.414 0l-4-4a1 1 0 011.414-1.414L8 12.586l7.293-7.293a1 1 0 011.414 0z" clipRule="evenodd" />
+                        </svg>
+                        Up to 10 stakes
+                      </li>
+                      <li className="flex items-center">
+                        <svg className="h-4 w-4 mr-2 text-green-500" fill="currentColor" viewBox="0 0 20 20">
+                          <path fillRule="evenodd" d="M16.707 5.293a1 1 0 010 1.414l-8 8a1 1 0 01-1.414 0l-4-4a1 1 0 011.414-1.414L8 12.586l7.293-7.293a1 1 0 011.414 0z" clipRule="evenodd" />
+                        </svg>
+                        Premium rewards
+                      </li>
+                      <li className="flex items-center">
+                        <svg className="h-4 w-4 mr-2 text-green-500" fill="currentColor" viewBox="0 0 20 20">
+                          <path fillRule="evenodd" d="M16.707 5.293a1 1 0 010 1.414l-8 8a1 1 0 01-1.414 0l-4-4a1 1 0 011.414-1.414L8 12.586l7.293-7.293a1 1 0 011.414 0z" clipRule="evenodd" />
+                        </svg>
+                        VIP features
+                      </li>
+                    </ul>
+                    {userTier !== 'Elite' && (
+                      <button
+                        onClick={() => upgradeTier('Elite')}
+                        className="mt-4 bg-gradient-to-r from-yellow-500 to-orange-500 text-white px-4 py-2 rounded-full w-full hover:opacity-90 transition"
+                      >
+                        Upgrade to Elite
+                      </button>
+                    )}
+                  </div>
+                  
+                  <div className={`tier-card ${userTier === 'Prestige' ? 'border-purple-500' : ''}`}>
+                    <h3 className="text-2xl font-bold text-white mb-2">Prestige</h3>
+                    <div className="tier-badge prestige mb-2">PRESTIGE</div>
+                    <div className="text-3xl font-bold text-yellow-400 mb-2">500 MFT</div>
+                    <p className="text-gray-400 mb-4">Upgrade Fee</p>
+                    <ul className="text-left text-gray-300 space-y-2">
+                      <li className="flex items-center">
+                        <svg className="h-4 w-4 mr-2 text-green-500" fill="currentColor" viewBox="0 0 20 20">
+                          <path fillRule="evenodd" d="M16.707 5.293a1 1 0 010 1.414l-8 8a1 1 0 01-1.414 0l-4-4a1 1 0 011.414-1.414L8 12.586l7.293-7.293a1 1 0 011.414 0z" clipRule="evenodd" />
+                        </svg>
+                        Unlimited stakes
+                      </li>
+                      <li className="flex items-center">
+                        <svg className="h-4 w-4 mr-2 text-green-500" fill="currentColor" viewBox="0 0 20 20">
+                          <path fillRule="evenodd" d="M16.707 5.293a1 1 0 010 1.414l-8 8a1 1 0 01-1.414 0l-4-4a1 1 0 011.414-1.414L8 12.586l7.293-7.293a1 1 0 011.414 0z" clipRule="evenodd" />
+                        </svg>
+                        Maximum rewards
+                      </li>
+                      <li className="flex items-center">
+                        <svg className="h-4 w-4 mr-2 text-green-500" fill="currentColor" viewBox="0 0 20 20">
+                          <path fillRule="evenodd" d="M16.707 5.293a1 1 0 010 1.414l-8 8a1 1 0 01-1.414 0l-4-4a1 1 0 011.414-1.414L8 12.586l7.293-7.293a1 1 0 011.414 0z" clipRule="evenodd" />
+                        </svg>
+                        VIP access
+                      </li>
+                    </ul>
+                    {userTier !== 'Prestige' && (
+                      <button
+                        onClick={() => upgradeTier('Prestige')}
+                        className="mt-4 bg-gradient-to-r from-purple-500 to-pink-500 text-white px-4 py-2 rounded-full w-full hover:opacity-90 transition"
+                      >
+                        Upgrade to Prestige
+                      </button>
+                    )}
+                  </div>
+                </div>
+              </div>
+            </section>
+
+            {/* Celebrity Tiers */}
+            <section className="mb-12">
+              <div className="bg-gray-800 rounded-2xl p-6">
+                <h2 className="text-2xl font-bold text-white mb-6">Celebrity Tiering System</h2>
+                
+                <div className="grid md:grid-cols-5 gap-6">
+                  <div className="tier-card">
+                    <div className="w-16 h-16 mx-auto mb-4 bronze rounded-full flex items-center justify-center text-2xl font-bold">
+                      B
+                    </div>
+                    <h3 className="text-2xl font-bold text-white mb-2">Bronze Tier</h3>
+                    <p className="text-gray-400 mb-4">Emerging/local celebrities</p>
+                    <div className="text-3xl font-bold text-yellow-400 mb-4">10% APY</div>
+                    <ul className="text-left text-gray-300">
+                      <li className="flex items-center mb-2">
+                        <svg className="h-4 w-4 mr-2 text-green-500" fill="currentColor" viewBox="0 0 20 20">
+                          <path fillRule="evenodd" d="M16.707 5.293a1 1 0 010 1.414l-8 8a1 1 0 01-1.414 0l-4-4a1 1 0 011.414-1.414L8 12.586l7.293-7.293a1 1 0 011.414 0z" clipRule="evenodd" />
+                        </svg>
+                        Emerging or locally celebrated figures
+                      </li>
+                      <li className="flex items-center mb-2">
+                        <svg className="h-4 w-4 mr-2 text-green-500" fill="currentColor" viewBox="0 0 20 20">
+                          <path fillRule="evenodd" d="M16.707 5.293a1 1 0 010 1.414l-8 8a1 1 0 01-1.414 0l-4-4a1 1 0 011.414-1.414L8 12.586l7.293-7.293a1 1 0 011.414 0z" clipRule="evenodd" />
+                        </svg>
+                        Regional recognition
+                      </li>
+                      <li className="flex items-center">
+                        <svg className="h-4 w-4 mr-2 text-green-500" fill="currentColor" viewBox="0 0 20 20">
+                          <path fillRule="evenodd" d="M16.707 5.293a1 1 0 010 1.414l-8 8a1 1 0 01-1.414 0l-4-4a1 1 0 011.414-1.414L8 12.586l7.293-7.293a1 1 0 011.414 0z" clipRule="evenodd" />
+                        </svg>
+                        Growing fan base
+                      </li>
+                    </ul>
+                  </div>
+                  
+                  <div className="tier-card">
+                    <div className="w-20 h-20 mx-auto mb-4 silver rounded-full flex items-center justify-center text-2xl font-bold">
+                      S
+                    </div>
+                    <h3 className="text-2xl font-bold text-white mb-2">Silver Tier</h3>
+                    <p className="text-gray-400 mb-4">B-list/regional celebrities</p>
+                    <div className="text-3xl font-bold text-yellow-400 mb-4">20% APY</div>
+                    <ul className="text-left text-gray-300">
+                      <li className="flex items-center mb-2">
+                        <svg className="h-4 w-4 mr-2 text-green-500" fill="currentColor" viewBox="0 0 20 20">
+                          <path fillRule="evenodd" d="M16.707 5.293a1 1 0 010 1.414l-8 8a1 1 0 01-1.414 0l-4-4a1 1 0 011.414-1.414L8 12.586l7.293-7.293a1 1 0 011.414 0z" clipRule="evenodd" />
+                        </svg>
+                        Established recognition
+                      </li>
+                      <li className="flex items-center mb-2">
+                        <svg className="h-4 w-4 mr-2 text-green-500" fill="currentColor" viewBox="0 0 20 20">
+                          <path fillRule="evenodd" d="M16.707 5.293a1 1 0 010 1.414l-8 8a1 1 0 01-1.414 0l-4-4a1 1 0 011.414-1.414L8 12.586l7.293-7.293a1 1 0 011.414 0z" clipRule="evenodd" />
+                        </svg>
+                        Regional popularity
+                      </li>
+                      <li className="flex items-center">
+                        <svg className="h-4 w-4 mr-2 text-green-500" fill="currentColor" viewBox="0 0 20 20">
+                          <path fillRule="evenodd" d="M16.707 5.293a1 1 0 010 1.414l-8 8a1 1 0 01-1.414 0l-4-4a1 1 0 011.414-1.414L8 12.586l7.293-7.293a1 1 0 011.414 0z" clipRule="evenodd" />
+                        </svg>
+                        Strong following
+                      </li>
+                    </ul>
+                  </div>
+                  
+                  <div className="tier-card">
+                    <div className="w-20 h-20 mx-auto mb-4 gold rounded-full flex items-center justify-center text-2xl font-bold">
+                      G
+                    </div>
+                    <h3 className="text-2xl font-bold text-white mb-2">Gold Tier</h3>
+                    <p className="text-gray-400 mb-4">National celebrities</p>
+                    <div className="text-3xl font-bold text-yellow-400 mb-4">30% APY</div>
+                    <ul className="text-left text-gray-300">
+                      <li className="flex items-center mb-2">
+                        <svg className="h-4 w-4 mr-2 text-green-500" fill="currentColor" viewBox="0 0 20 20">
+                          <path fillRule="evenodd" d="M16.707 5.293a1 1 0 010 1.414l-8 8a1 1 0 01-1.414 0l-4-4a1 1 0 011.414-1.414L8 12.586l7.293-7.293a1 1 0 011.414 0z" clipRule="evenodd" />
+                        </svg>
+                        National recognition
+                      </li>
+                      <li className="flex items-center mb-2">
+                        <svg className="h-4 w-4 mr-2 text-green-500" fill="currentColor" viewBox="0 0 20 20">
+                          <path fillRule="evenodd" d="M16.707 5.293a1 1 0 010 1.414l-8 8a1 1 0 01-1.414 0l-4-4a1 1 0 011.414-1.414L8 12.586l7.293-7.293a1 1 0 011.414 0z" clipRule="evenodd" />
+                        </svg>
+                        Significant following
+                      </li>
+                      <li className="flex items-center">
+                        <svg className="h-4 w-4 mr-2 text-green-500" fill="currentColor" viewBox="0 0 20 20">
+                          <path fillRule="evenodd" d="M16.707 5.293a1 1 0 010 1.414l-8 8a1 1 0 01-1.414 0l-4-4a1 1 0 011.414-1.414L8 12.586l7.293-7.293a1 1 0 011.414 0z" clipRule="evenodd" />
+                        </svg>
+                        Industry influence
+                      </li>
+                    </ul>
+                  </div>
+                  
+                  <div className="tier-card">
+                    <div className="w-20 h-20 mx-auto mb-4 platinum rounded-full flex items-center justify-center text-2xl font-bold">
+                      P
+                    </div>
+                    <h3 className="text-2xl font-bold text-white mb-2">Platinum Tier</h3>
+                    <p className="text-gray-400 mb-4">A-list/global celebrities</p>
+                    <div className="text-3xl font-bold text-yellow-400 mb-4">40% APY</div>
+                    <ul className="text-left text-gray-300">
+                      <li className="flex items-center mb-2">
+                        <svg className="h-4 w-4 mr-2 text-green-500" fill="currentColor" viewBox="0 0 20 20">
+                          <path fillRule="evenodd" d="M16.707 5.293a1 1 0 010 1.414l-8 8a1 1 0 01-1.414 0l-4-4a1 1 0 011.414-1.414L8 12.586l7.293-7.293a1 1 0 011.414 0z" clipRule="evenodd" />
+                        </svg>
+                        Global recognition
+                      </li>
+                      <li className="flex items-center mb-2">
+                        <svg className="h-4 w-4 mr-2 text-green-500" fill="currentColor" viewBox="0 0 20 20">
+                          <path fillRule="evenodd" d="M16.707 5.293a1 1 0 010 1.414l-8 8a1 1 0 01-1.414 0l-4-4a1 1 0 011.414-1.414L8 12.586l7.293-7.293a1 1 0 011.414 0z" clipRule="evenodd" />
+                        </svg>
+                        Massive fan base
+                      </li>
+                      <li className="flex items-center">
+                        <svg className="h-4 w-4 mr-2 text-green-500" fill="currentColor" viewBox="0 0 20 20">
+                          <path fillRule="evenodd" d="M16.707 5.293a1 1 0 010 1.414l-8 8a1 1 0 01-1.414 0l-4-4a1 1 0 011.414-1.414L8 12.586l7.293-7.293a1 1 0 011.414 0z" clipRule="evenodd" />
+                        </svg>
+                        Worldwide influence
+                      </li>
+                    </ul>
+                  </div>
+                  
+                  <div className="tier-card">
+                    <div className="w-20 h-20 mx-auto mb-4 diamond rounded-full flex items-center justify-center text-2xl font-bold">
+                      D
+                    </div>
+                    <h3 className="text-2xl font-bold text-white mb-2">Diamond Tier</h3>
+                    <p className="text-gray-400 mb-4">Iconic/legendary celebrities</p>
+                    <div className="text-3xl font-bold text-yellow-400 mb-4">60% APY</div>
+                    <ul className="text-left text-gray-300">
+                      <li className="flex items-center mb-2">
+                        <svg className="h-4 w-4 mr-2 text-green-500" fill="currentColor" viewBox="0 0 20 20">
+                          <path fillRule="evenodd" d="M16.707 5.293a1 1 0 010 1.414l-8 8a1 1 0 01-1.414 0l-4-4a1 1 0 011.414-1.414L8 12.586l7.293-7.293a1 1 0 011.414 0z" clipRule="evenodd" />
+                        </svg>
+                        Unparalleled success
+                      </li>
+                      <li className="flex items-center mb-2">
+                        <svg className="h-4 w-4 mr-2 text-green-500" fill="currentColor" viewBox="0 0 20 20">
+                          <path fillRule="evenodd" d="M16.707 5.293a1 1 0 010 1.414l-8 8a1 1 0 01-1.414 0l-4-4a1 1 0 011.414-1.414L8 12.586l7.293-7.293a1 1 0 011.414 0z" clipRule="evenodd" />
+                        </svg>
+                        Enduring fame
+                      </li>
+                      <li className="flex items-center">
+                        <svg className="h-4 w-4 mr-2 text-green-500" fill="currentColor" viewBox="0 0 20 20">
+                          <path fillRule="evenodd" d="M16.707 5.293a1 1 0 010 1.414l-8 8a1 1 0 01-1.414 0l-4-4a1 1 0 011.414-1.414L8 12.586l7.293-7.293a1 1 0 011.414 0z" clipRule="evenodd" />
+                        </svg>
+                        Extraordinary global influence
+                      </li>
+                    </ul>
+                  </div>
+                </div>
+              </div>
+            </section>
+
+            {/* Camera Section */}
+            <section className="mb-12">
+              <div className="bg-gray-800 rounded-2xl shadow-xl p-6">
+                <h2 className="text-2xl font-bold text-white mb-6">Capture & Detect Celebrities</h2>
+                
+                {!showPhotoOptions && !cameraLoading && !cameraError && (
+                  <div className="text-center">
+                    <div className="w-24 h-24 bg-blue-100 rounded-full flex items-center justify-center mx-auto mb-4">
+                      <svg xmlns="http://www.w3.org/2000/svg" className="h-12 w-12 text-yellow-500" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+                        <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M3 9a2 2 0 012-2h.93a2 2 0 001.664-.89l.812-1.22A2 2 0 0110.07 4h3.86a2 2 0 011.664.89l.812 1.22A2 2 0 0018.07 7H19a2 2 0 012 2v9a2 2 0 01-2 2H5a2 2 0 01-2-2V9z" />
+                      </svg>
+                    </div>
+                    <h3 className="text-xl font-bold text-white mb-4">Capture Moment</h3>
+                    <p className="text-gray-300 mb-6">Take a photo with a celebrity using your device camera</p>
+                    
+                    {cameraError && (
+                      <div className="error-message">
+                        {cameraError}
+                      </div>
+                    )}
+                    
+                    <button
+                      onClick={startCamera}
+                      className="bg-gradient-to-r from-blue-500 to-cyan-500 text-white px-8 py-3 rounded-full font-semibold hover:opacity-90 transition"
+                    >
+                      Open Camera
+                    </button>
+                  </div>
+                )}
+
+                {cameraError && (
+                  <div className="error-message">
+                    {cameraError}
+                  </div>
+                )}
+
+                {cameraActive && (
+                  <div className="camera-container">
+                    <video 
+                      ref={videoRef} 
+                      autoPlay 
+                      playsInline 
+                      className="camera-video"
+                    />
+                    <div className="camera-controls">
+                      <div className="cancel-button" onClick={stopCamera}>
+                        <svg xmlns="http://www.w3.org/2000/svg" className="h-6 w-6 text-white" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+                          <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M6 18L18 6M6 6l12 12" />
+                        </svg>
+                      </div>
+                      <div className="capture-button" onClick={capturePhoto}></div>
+                    </div>
+                  </div>
+                )}
+
+                {capturedImage && (
+                  <div className="mt-6">
+                    <h3 className="text-lg font-semibold text-white mb-4">Your Captured Photo</h3>
+                    <img src={capturedImage} alt="Captured" className="w-full rounded-xl shadow-lg mb-4" />
+                    
+                    {showDetection && (
+                      <div className="mt-6">
+                        <h2 className="text-xl font-semibold text-center mb-4">AI Detection in Progress</h2>
+                        <div className="w-full bg-gray-700 rounded-full h-3 mb-3">
+                          <div 
+                            className="bg-gradient-to-r from-blue-500 to-cyan-500 h-3 rounded-full transition-all duration-300"
+                            style={{ width: `${detectionProgress}%` }}
+                          ></div>
+                        </div>
+                        <p className="text-center text-gray-400">
+                          {detectionProgress < 20 && "Initializing AI detection system..."}
+                          {detectionProgress >= 20 && detectionProgress < 40 && "Detecting faces in the photo..."}
+                          {detectionProgress >= 40 && detectionProgress < 70 && "Analyzing facial features..."}
+                          {detectionProgress >= 70 && detectionProgress < 90 && "Matching with celebrity database..."}
+                          {detectionProgress >= 90 && "Calculating confidence scores..."}
+                        </p>
+                      </div>
+                    )}
+
+                    {detectionResults.length > 0 && (
+                      <div className="mt-6">
+                        <h3 className="text-lg font-semibold text-white mb-4">AI Detection Results</h3>
+                        {detectionResults.map((celebrity, index) => (
+                          <div 
+                            key={index} 
+                            className="bg-gray-700 mb-4 p-4 rounded-lg cursor-pointer"
+                            onClick={() => {
+                              setConfirmedCelebrity(celebrity);
+                              setCelebrityConfirmed(true);
+                            }}
+                          >
+                            <div className="flex items-center">
+                              <div 
+                                className={`w-12 h-12 rounded-full flex items-center justify-center mr-4 ${celebrity.tier.toLowerCase()}`}
+                                style={{ 
+                                  backgroundColor: celebrity.color,
+                                  color: ['#CD7F32', '#C0C0C0', '#FFD700'].includes(celebrity.color) ? '#000' : '#000' 
+                                }}
+                              >
+                                {celebrity.name.charAt(0)}
+                              </div>
+                              <div className="flex-1">
+                                <h3 className="font-bold text-lg">{celebrity.name}</h3>
+                                <p className="text-sm text-gray-400">
+                                  {celebrity.tier} Tier • {celebrity.apy}% APY
+                                </p>
+                              </div>
+                              <div className="text-right">
+                                <div className="text-xs text-gray-400 mb-1">Confidence</div>
+                                <div className="w-20 h-2 bg-gray-600 rounded-full overflow-hidden">
+                                  <div 
+                                    className="h-full" 
+                                    style={{ 
+                                      width: `${Math.round(celebrity.confidence * 100)}%`, 
+                                      backgroundColor: celebrity.color 
+                                    }}
+                                  ></div>
+                                </div>
+                                <div className="text-sm mt-1">
+                                  {Math.round(celebrity.confidence * 100)}%
+                                </div>
+                              </div>
+                            </div>
+                          </div>
+                        ))}
+                      </div>
+                    )}
+
+                    {celebrityConfirmed && confirmedCelebrity && (
+                      <div className="mt-6">
+                        <h3 className="text-lg font-semibold text-white mb-4">Confirm Celebrity</h3>
+                        <div className="bg-gray-700 p-4 rounded-lg mb-4">
+                          <div className="flex items-center">
+                            <div 
+                              className={`w-16 h-16 rounded-full flex items-center justify-center mr-4 ${confirmedCelebrity.tier.toLowerCase()}`}
+                              style={{ 
+                                backgroundColor: confirmedCelebrity.color,
+                                color: ['#CD7F32', '#C0C0C0', '#FFD700'].includes(confirmedCelebrity.color) ? '#000' : '#000' 
+                              }}
+                            >
+                              <span className="text-2xl">{confirmedCelebrity.name.charAt(0)}</span>
+                            </div>
+                            <div>
+                              <h3 className="font-bold text-xl">{confirmedCelebrity.name}</h3>
+                              <p className="text-gray-400">
+                                {confirmedCelebrity.tier} Tier • {confirmedCelebrity.apy}% APY
+                              </p>
+                            </div>
+                          </div>
+                        </div>
+                        
+                        <div className="flex flex-col sm:flex-row gap-4">
+                          <button 
+                            onClick={handleStakePhoto}
+                            className="flex-1 bg-gradient-to-r from-blue-500 to-cyan-500 text-white px-6 py-3 rounded-xl font-semibold"
+                          >
+                            Stake & Earn
+                          </button>
+                          <button 
+                            onClick={handleMintNft}
+                            className="flex-1 bg-gradient-to-r from-yellow-500 to-orange-500 text-white px-6 py-3 rounded-xl font-semibold"
+                          >
+                            Mint as NFT
+                          </button>
+                        </div>
+                      </div>
+                    )}
+                  </div>
+                )}
+                
+                {showPhotoOptions && !cameraActive && !capturedImage && !cameraError && (
+                  <div className="camera-placeholder">
+                    <div className="loading-spinner mb-4"></div>
+                    <h3 className="text-xl font-bold mb-2">Accessing Camera</h3>
+                    <p className="text-gray-300">Please allow camera access when prompted</p>
+                  </div>
+                )}
+                
+                {/* Hidden canvas for photo capture */}
+                <canvas ref={canvasRef} style={{ display: 'none' }}></canvas>
+              </div>
             </section>
           </main>
         </div>
@@ -362,14 +1180,28 @@
         setCurrentPage('dashboard');
       };
       
+      const signup = (userData) => {
+        setUser(userData);
+        setCurrentPage('dashboard');
+      };
+      
       const logout = () => {
         setUser(null);
+        setCurrentPage('login');
+      };
+      
+      const navigateToSignup = () => {
+        setCurrentPage('signup');
+      };
+      
+      const navigateToLogin = () => {
         setCurrentPage('login');
       };
 
       return (
         <div>
-          {currentPage === 'login' && <LoginPage onLogin={login} />}
+          {currentPage === 'login' && <LoginPage onLogin={login} onNavigateToSignup={navigateToSignup} />}
+          {currentPage === 'signup' && <SignupPage onSignup={signup} onNavigateToLogin={navigateToLogin} />}
           {currentPage === 'dashboard' && user && <DashboardPage user={user} onLogout={logout} />}
         </div>
       );
