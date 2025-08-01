@@ -1,4 +1,19 @@
-<!DOCTYPE html>
+
+                        <!DOCTYPE html>
+                        <html lang="en">
+                        <head>
+                            <meta charset="UTF-8">
+                            <meta name="viewport" content="width=device-width, initial-scale=1.0">
+              <style>
+                body {
+                  background-color: white; /* Ensure the iframe has a white background */
+                }
+    
+                
+              </style>
+                        </head>
+                        <body>
+                            <!DOCTYPE html>
 <html lang="en">
 <head>
     <meta charset="UTF-8">
@@ -160,6 +175,14 @@
         .influencer { background: #d4edda; color: #155724; }
         .elite { background: #fff3cd; color: #856404; }
         .prestige { background: #f8d7da; color: #721c24; }
+        .camera-error {
+            background: #fff0f0;
+            border: 1px solid #ffcccc;
+            border-radius: 8px;
+            padding: 12px;
+            margin: 15px 0;
+            color: #d32f2f;
+        }
     </style>
 </head>
 <body class="bg-gray-50">
@@ -183,6 +206,8 @@
             const [showStakingModal, setShowStakingModal] = React.useState(false);
             const [selectedPhoto, setSelectedPhoto] = React.useState(null);
             const [cameraError, setCameraError] = React.useState('');
+            const [cameraStream, setCameraStream] = React.useState(null);
+            const [isProcessing, setIsProcessing] = React.useState(false);
             
             const videoRef = React.useRef(null);
             const canvasRef = React.useRef(null);
@@ -241,32 +266,57 @@
             };
             
             const startCamera = async () => {
+                setCameraError('');
+                setIsProcessing(true);
+                
                 try {
-                    const stream = await navigator.mediaDevices.getUserMedia({ 
-                        video: { 
+                    // First check if camera is supported
+                    if (!navigator.mediaDevices || !navigator.mediaDevices.getUserMedia) {
+                        setCameraError('Camera access is not supported in your browser. Please try a modern browser like Chrome or Firefox.');
+                        setIsProcessing(false);
+                        return;
+                    }
+                    
+                    const constraints = {
+                        video: {
                             facingMode: 'user',
                             width: { ideal: 1280 },
                             height: { ideal: 720 }
-                        } 
-                    });
+                        }
+                    };
+                    
+                    const stream = await navigator.mediaDevices.getUserMedia(constraints);
+                    setCameraStream(stream);
+                    
                     if (videoRef.current) {
                         videoRef.current.srcObject = stream;
-                        setCameraActive(true);
-                        setCameraError('');
+                        videoRef.current.onloadedmetadata = () => {
+                            videoRef.current.play();
+                            setCameraActive(true);
+                            setIsProcessing(false);
+                        };
                     }
                 } catch (err) {
-                    setCameraError('Camera access denied. Please allow camera access to use this feature.');
-                    console.error('Error accessing camera:', err);
+                    setIsProcessing(false);
+                    
+                    if (err.name === 'NotAllowedError') {
+                        setCameraError('Camera access denied. Please allow camera access to use this feature.');
+                    } else if (err.name === 'NotFoundError') {
+                        setCameraError('No camera found on this device.');
+                    } else {
+                        setCameraError(`Error accessing camera: ${err.message}`);
+                    }
+                    
+                    console.error('Camera error:', err);
                 }
             };
             
             const stopCamera = () => {
-                if (videoRef.current && videoRef.current.srcObject) {
-                    const tracks = videoRef.current.srcObject.getTracks();
-                    tracks.forEach(track => track.stop());
-                    videoRef.current.srcObject = null;
-                    setCameraActive(false);
+                if (cameraStream) {
+                    cameraStream.getTracks().forEach(track => track.stop());
+                    setCameraStream(null);
                 }
+                setCameraActive(false);
             };
             
             const capturePhoto = () => {
@@ -286,15 +336,14 @@
                 // Convert to image data URL
                 const imageDataUrl = canvas.toDataURL('image/jpeg');
                 setCapturedImage(imageDataUrl);
-                setUploadedPhoto(imageDataUrl);
                 
                 // Stop camera
                 stopCamera();
             };
             
             const startDetection = () => {
-                if (!capturedImage) {
-                    alert('Please capture a photo first!');
+                if (!capturedImage && !uploadedPhoto) {
+                    alert('Please capture or upload a photo first!');
                     return;
                 }
                 
@@ -356,19 +405,7 @@
                     totalReturn: 0
                 };
                 setStakedPhotos([...stakedPhotos, newStake]);
-                // Add transaction
-                setTransactions([
-                    ...transactions,
-                    {
-                        id: transactions.length + 1,
-                        type: 'Photo Staking',
-                        amount: tierInfo.fee > 0 ? `${tierInfo.fee} MFT` : 'Free',
-                        status: 'Completed',
-                        date: new Date().toISOString().split('T')[0],
-                        details: `${photo.celebrity.name} selfie staked`
-                    }
-                ]);
-                alert(`${photo.celebrity.name} photo staked successfully! You'll earn ${photo.celebrity.apy}% APY based on their Diamond tier status.`);
+                alert(`${photo.celebrity.name} photo staked successfully! You'll earn ${photo.celebrity.apy}% APY based on their ${photo.celebrity.tier} tier status.`);
                 setSelectedPhoto(null);
                 setShowStakingModal(false);
             };
@@ -381,18 +418,6 @@
                 }
                 setUserMftBalance(userMftBalance - tierInfo.fee);
                 setUserTier(newTier);
-                // Add transaction
-                setTransactions([
-                    ...transactions,
-                    {
-                        id: transactions.length + 1,
-                        type: 'Tier Upgrade',
-                        amount: `${tierInfo.fee} MFT`,
-                        status: 'Completed',
-                        date: new Date().toISOString().split('T')[0],
-                        details: `Upgraded to ${newTier} tier`
-                    }
-                ]);
                 alert(`Successfully upgraded to ${newTier} tier! You can now stake up to ${tierInfo.maxStakes} photos simultaneously.`);
             };
             
@@ -506,7 +531,7 @@
                                 <span className="bg-gradient-to-r from-blue-600 to-cyan-600 text-transparent bg-clip-text">AI Celebrity Detection</span> & Photo Staking
                             </h1>
                             <p className="text-xl text-gray-600 mb-10 max-w-3xl mx-auto">
-                                Use your camera to capture moments with celebrities, let our AI detect them, and earn $MFT tokens based on their fame tier
+                                Use your camera to capture moments with celebrities, let our AI detect them, and earn $MFT tokens based on their fame tier - from Bronze to Diamond
                             </p>
                             <div class="flex flex-col sm:flex-row gap-4 justify-center">
                                 <button 
@@ -890,19 +915,34 @@
                                             </svg>
                                             <h3 className="text-xl font-semibold text-gray-800 mb-2">Open Camera</h3>
                                             <p className="text-gray-600 mb-4">Use your device camera to capture moments with celebrities</p>
+                                            
                                             {cameraError && (
-                                                <div className="bg-red-50 text-red-700 p-3 rounded-lg mb-4 text-sm">
+                                                <div className="camera-error">
                                                     {cameraError}
                                                 </div>
                                             )}
+                                            
                                             <button 
                                                 onClick={startCamera}
                                                 className="btn-primary"
+                                                disabled={isProcessing}
                                             >
-                                                <svg xmlns="http://www.w3.org/2000/svg" className="h-5 w-5 mr-2 inline" fill="none" viewBox="0 0 24 24" stroke="currentColor">
-                                                    <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M3 9a2 2 0 012-2h.93a2 2 0 001.664-.89l.812-1.22A2 2 0 0110.07 4h3.86a2 2 0 011.664.89l.812 1.22A2 2 0 0018.07 7H19a2 2 0 012 2v9a2 2 0 01-2 2H5a2 2 0 01-2-2V9z" />
-                                                </svg>
-                                                Open Camera
+                                                {isProcessing ? (
+                                                    <span className="flex items-center justify-center">
+                                                        <svg className="animate-spin -ml-1 mr-2 h-4 w-4 text-white" xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24">
+                                                            <circle className="opacity-25" cx="12" cy="12" r="10" stroke="currentColor" strokeWidth="4"></circle>
+                                                            <path className="opacity-75" fill="currentColor" d="M4 12a8 8 0 018-8V0C5.373 0 0 5.373 0 12h4zm2 5.291A7.962 7.962 0 014 12H0c0 3.042 1.135 5.824 3 7.938l3-2.647z"></path>
+                                                        </svg>
+                                                        Accessing Camera...
+                                                    </span>
+                                                ) : (
+                                                    <>
+                                                        <svg xmlns="http://www.w3.org/2000/svg" className="h-5 w-5 mr-2 inline" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+                                                            <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M3 9a2 2 0 012-2h.93a2 2 0 001.664-.89l.812-1.22A2 2 0 0110.07 4h3.86a2 2 0 011.664.89l.812 1.22A2 2 0 0018.07 7H19a2 2 0 012 2v9a2 2 0 01-2 2H5a2 2 0 01-2-2V9z" />
+                                                        </svg>
+                                                        Open Camera
+                                                    </>
+                                                )}
                                             </button>
                                         </div>
                                     )}
@@ -1162,3 +1202,12 @@
     </script>
 </body>
 </html>
+
+
+    
+              <script>
+                              
+              </script>
+                        </body>
+                        </html>
+                    
