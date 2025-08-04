@@ -1,0 +1,73 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0"/>
+  <title>MEEFIE - Dashboard</title>
+  <script src="https://cdn.tailwindcss.com"></script>
+  <style>
+    body { font-family: 'Inter', sans-serif; background: #0d1b2a; }
+    .gradient-text { background: linear-gradient(to right, #ffeb3b, #d4a017); -webkit-background-clip: text; -webkit-text-fill-color: transparent; }
+  </style>
+</head>
+<body class="text-white min-h-screen p-6">
+  <div class="max-w-5xl mx-auto">
+
+    <!-- Header -->
+    <header class="flex justify-between items-center mb-8">
+      <h1 class="text-3xl font-bold gradient-text">MEEFIE</h1>
+      <div class="flex items-center gap-4">
+        <span class="text-yellow-400">500 MFT</span>
+        <button onclick="logout()" class="bg-red-600 px-4 py-2 rounded">Logout</button>
+      </div>
+    </header>
+
+    <!-- Welcome -->
+    <section class="bg-white/10 p-8 rounded-2xl mb-8 backdrop-blur-sm text-center">
+      <h2 class="text-2xl font-bold mb-4">Welcome, John Doe!</h2>
+      <p class="text-gray-300">Take a photo with a celebrity and earn rewards.</p>
+      <button onclick="openCamera()" class="mt-4 bg-gradient-to-r from-yellow-500 to-orange-600 px-6 py-3 rounded-full font-bold">
+        📸 Open Camera
+      </button>
+    </section>
+
+    <!-- Stats -->
+    <div class="grid md:grid-cols-3 gap-6 mb-8">
+      <div class="bg-white/10 p-6 rounded-xl text-center">
+        <h3 class="text-lg font-bold">Photos Taken</h3>
+        <p class="text-2xl">12</p>
+      </div>
+      <div class="bg-white/10 p-6 rounded-xl text-center">
+        <h3 class="text-lg font-bold">NFTs Created</h3>
+        <p class="text-2xl">3</p>
+      </div>
+      <div class="bg-white/10 p-6 rounded-xl text-center">
+        <h3 class="text-lg font-bold">Staked Photos</h3>
+        <p class="text-2xl">5</p>
+      </div>
+    </div>
+
+    <!-- Upgrade Tier -->
+    <div class="bg-white/10 p-8 rounded-2xl">
+      <h2 class="text-2xl font-bold mb-4">Upgrade Your Profile</h2>
+      <p class="text-gray-300 mb-4">Unlock more staking slots and VIP features</p>
+      <div class="grid md:grid-cols-2 gap-4">
+        <button class="bg-blue-600 p-3 rounded-lg">Explorer (20 MFT)</button>
+        <button class="bg-blue-600 p-3 rounded-lg">Influencer (50 MFT)</button>
+        <button class="bg-blue-600 p-3 rounded-lg">Elite (100 MFT)</button>
+        <button class="bg-blue-600 p-3 rounded-lg">Prestige (500 MFT)</button>
+      </div>
+    </div>
+
+  </div>
+
+  <script>
+    function openCamera() {
+      alert("Camera opens here. In full app, this uses your webcam.");
+    }
+    function logout() {
+      window.location.href = "index.html";
+    }
+  </script>
+</body>
+</html>
