@@ -4,12 +4,12 @@ import { getAuth } from 'https://www.gstatic.com/firebasejs/9.22.0/firebase-auth
 
 // Your Firebase config (replace with your own)
 const firebaseConfig = {
-  apiKey: "YOUR_API_KEY",
-  authDomain: "your-project-id.firebaseapp.com",
-  projectId: "your-project-id",
-  storageBucket: "your-project-id.appspot.com",
-  messagingSenderId: "YOUR_SENDER_ID",
-  appId: "YOUR_APP_ID"
+  apiKey: "AIzaSyBt4EwlCkoiynJQMlElwvpUVGDARjHuHUg",
+  authDomain: "meefie-web-app.firebaseapp.com",
+  projectId: "meefie-web-app",
+  storageBucket: "meefie-web-app.appspot.com",
+  messagingSenderId: "874544488197",
+  appId: "1056787620759-s3nmkr5rtco36n2osqqu5b07q9hdvofo.apps.googleusercontent.com"
 };
 
 // Initialize Firebase
