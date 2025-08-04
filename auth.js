@@ -1,4 +1,3 @@
-// Import Firebase modules
 import { auth } from './firebase-config.js';
 import { 
   signInWithEmailAndPassword, 
@@ -8,7 +7,7 @@ import {
   FacebookAuthProvider 
 } from 'https://www.gstatic.com/firebasejs/9.22.0/firebase-auth.js';
 
-// ——— Email/Password Sign In ———
+// Handle Email/Password Sign In
 document.getElementById("loginForm")?.addEventListener("submit", async (e) => {
   e.preventDefault();
   const email = document.getElementById("email").value;
@@ -19,11 +18,11 @@ document.getElementById("loginForm")?.addEventListener("submit", async (e) => {
     alert("✅ Logged in!");
     window.location.href = "dashboard.html";
   } catch (error) {
-    alert(`❌ Error: ${error.message}`);
+    alert(`❌ Login failed: ${error.message}`);
   }
 });
 
-// ——— Email/Password Sign Up ———
+// Handle Email/Password Sign Up
 document.getElementById("signupForm")?.addEventListener("submit", async (e) => {
   e.preventDefault();
   const email = document.getElementById("email").value;
@@ -34,39 +33,34 @@ document.getElementById("signupForm")?.addEventListener("submit", async (e) => {
     alert("✅ Account created!");
     window.location.href = "dashboard.html";
   } catch (error) {
-    alert(`❌ Error: ${error.message}`);
+    alert(`❌ Sign-up failed: ${error.message}`);
   }
 });
 
-// ——— Google Sign-In/Up ———
-document.getElementById("googleSignIn").addEventListener("click", async () => {
-  const provider = new GoogleAuthProvider();
-  try {
-    await signInWithPopup(auth, provider);
-    alert(`Signed in with Google!`);
-    window.location.href = "dashboard.html";
-  } catch (error) {
-    alert(`Google login failed: ${error.message}`);
-  }
+// Handle Google Sign-In/Up
+const googleProvider = new GoogleAuthProvider();
+document.getElementById("googleSignIn")?.addEventListener("click", async () => {
+  handleSocialSignIn(googleProvider, "Google");
+});
+document.getElementById("googleSignUp")?.addEventListener("click", async () => {
+  handleSocialSignIn(googleProvider, "Google");
 });
 
-// ——— Facebook Sign-In/Up ———
+// Handle Facebook Sign-In/Up
+const facebookProvider = new FacebookAuthProvider();
 document.getElementById("facebookSignIn")?.addEventListener("click", async () => {
-  const provider = new FacebookAuthProvider();
-  handleSocialSignIn(provider, "Facebook");
+  handleSocialSignIn(facebookProvider, "Facebook");
 });
-
 document.getElementById("facebookSignUp")?.addEventListener("click", async () => {
-  const provider = new FacebookAuthProvider();
-  handleSocialSignIn(provider, "Facebook");
+  handleSocialSignIn(facebookProvider, "Facebook");
 });
 
-// ——— Instagram (not supported directly) ———
+// Handle Instagram (not direct)
 document.getElementById("instagramSignIn")?.addEventListener("click", () => {
-  alert("⚠️ Instagram login requires custom OAuth setup.");
+  alert("⚠️ Instagram login requires Facebook OAuth setup.");
 });
 document.getElementById("instagramSignUp")?.addEventListener("click", () => {
-  alert("⚠️ Instagram sign-up requires custom OAuth setup.");
+  alert("⚠️ Instagram sign-up requires Facebook OAuth setup.");
 });
 
 // Reusable social sign-in function
