@@ -1,0 +1,43 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0"/>
+  <title>MEEFIE - Sign Up</title>
+  <link rel="stylesheet" href="styles.css">
+  <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;700&display=swap" rel="stylesheet">
+</head>
+<body class="bg-blue-900 min-h-screen flex items-center justify-center p-4">
+  <div class="bg-white card w-full max-w-sm shadow-md rounded-lg overflow-hidden">
+    <h2 class="text-xl font-semibold text-center mb-1 text-gray-800">Sign Up</h2>
+    <p class="text-gray-600 text-center text-sm mb-6">Create a new account</p>
+    <form>
+      <!-- Email -->
+      <div class="mb-4">
+        <label for="email" class="block text-sm font-medium text-gray-800 mb-1">Email</label>
+        <input 
+          type="email" 
+          id="email" 
+          placeholder="Enter your email" 
+          class="input-field"
+          required
+        />
+      </div>
+      <!-- Password -->
+      <div class="mb-6">
+        <label for="password" class="block text-sm font-medium text-gray-800 mb-1">Password</label>
+        <input 
+          type="password" 
+          id="password" 
+          placeholder="Enter your password" 
+          class="input-field"
+          required
+        />
+      </div>
+      <!-- Sign Up Button -->
+      <button type="submit" class="sign-in-btn">Sign Up</button>
+    </form>
+  </div>
+  <script src="script.js"></script>
+</body>
+</html>
