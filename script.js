@@ -1,18 +1,23 @@
-// Handle Sign In
-document.getElementById("loginForm").addEventListener("submit", function(e) {
+// Handle Login Form
+document.getElementById("loginForm").addEventListener("submit", function (e) {
   e.preventDefault();
-  const email = document.getElementById("email").value;
+  const username = document.getElementById("username").value;
   const password = document.getElementById("password").value;
-  alert(`Signing in as ${email}...\nIn production, connect to Firebase/Auth0.`);
-  // Redirect to dashboard or call backend
-  window.location.href = "dashboard.html";
+
+  // Simulate login
+  if (username && password) {
+    alert(`Welcome, ${username}!`);
+    // In production: redirect to dashboard
+    window.location.href = "dashboard.html";
+  } else {
+    alert("Please enter both username and password.");
+  }
 });
 
-// Handle Social Logins
-const socialButtons = document.querySelectorAll(".social-btn");
-socialButtons.forEach(button => {
-  button.addEventListener("click", function() {
-    const provider = this.querySelector("span").textContent.toLowerCase();
-    alert(`${provider.charAt(0).toUpperCase() + provider.slice(1)} Sign-In clicked.\nIn production, integrate OAuth.`);
+// Handle Social Login Buttons
+document.querySelectorAll(".social-btn").forEach((button) => {
+  button.addEventListener("click", function () {
+    const provider = this.getAttribute("data-provider");
+    alert(`${provider.charAt(0).toUpperCase() + provider.slice(1)} login clicked.\nIn production, integrate OAuth.`);
   });
 });
