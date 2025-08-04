@@ -3,239 +3,198 @@
 <head>
   <meta charset="UTF-8" />
   <meta name="viewport" content="width=device-width, initial-scale=1.0"/>
-  <title>MEEFIE - Celebrity Photo Staking</title>
+  <title>MEEFIE - Login</title>
 
-  <!-- Tailwind CSS -->
+  <!-- Tailwind CSS via CDN -->
   <script src="https://cdn.tailwindcss.com"></script>
 
-  <!-- React & Babel -->
-  <script crossorigin src="https://unpkg.com/react@18/umd/react.development.js"></script>
-  <script crossorigin src="https://unpkg.com/react-dom@18/umd/react-dom.development.js"></script>
-  <script src="https://unpkg.com/@babel/standalone/babel.min.js"></script>
+  <!-- Google Fonts -->
+  <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;700&display=swap" rel="stylesheet">
 
+  <!-- Custom Styles -->
   <style>
-    body { font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', sans-serif; }
-    .gradient-text { background: linear-gradient(to right, #007bff, #ffeb3b); -webkit-background-clip: text; -webkit-text-fill-color: transparent; }
-    .btn-yellow { background: linear-gradient(to right, #f57c00, #ffeb3b); }
-    .card { background: rgba(255, 255, 255, 0.1); backdrop-filter: blur(10px); }
+    body {
+      font-family: 'Inter', sans-serif;
+      background: linear-gradient(to bottom, #0d1b2a, #1b263b);
+    }
+    .gradient-text {
+      background: linear-gradient(to right, #ffeb3b, #d4a017);
+      -webkit-background-clip: text;
+      -webkit-text-fill-color: transparent;
+      background-clip: text;
+      color: transparent;
+    }
+    .input-field {
+      background-color: #1b2a47;
+      border: 1px solid #3a4a6a;
+      border-radius: 0.5rem;
+      padding: 0.75rem;
+      width: 100%;
+      color: #e0e1e6;
+      font-size: 1rem;
+    }
+    .input-field::placeholder {
+      color: #8a9ab0;
+    }
+    .input-field:focus {
+      outline: none;
+      border-color: #d4a017;
+      box-shadow: 0 0 0 2px rgba(212, 160, 23, 0.3);
+    }
+    .sign-in-btn {
+      background: linear-gradient(to right, #d4a017, #b8860b);
+      color: white;
+      font-weight: 600;
+      border: none;
+      border-radius: 0.5rem;
+      padding: 0.75rem 1rem;
+      width: 100%;
+      font-size: 1rem;
+      cursor: pointer;
+      transition: all 0.3s ease;
+      box-shadow: 0 4px 8px rgba(212, 160, 23, 0.3);
+    }
+    .sign-in-btn:hover {
+      opacity: 0.9;
+      transform: translateY(-1px);
+      box-shadow: 0 6px 12px rgba(212, 160, 23, 0.4);
+    }
+    .social-btn {
+      background: #1b2a47;
+      border: 1px solid #3a4a6a;
+      border-radius: 0.5rem;
+      padding: 0.75rem;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      gap: 0.5rem;
+      cursor: pointer;
+      width: 100%;
+      color: white;
+      transition: all 0.3s ease;
+    }
+    .social-btn:hover {
+      background: #2a3b5c;
+      transform: translateY(-1px);
+    }
+    .separator {
+      margin: 1.5rem 0;
+      display: flex;
+      align-items: center;
+      color: #8a9ab0;
+      font-size: 0.875rem;
+    }
+    .separator-line {
+      flex-grow: 1;
+      height: 1px;
+      background-color: #3a4a6a;
+    }
+    .link {
+      color: #e0c080;
+      font-weight: 500;
+    }
+    .link:hover {
+      text-decoration: underline;
+    }
+    .card {
+      background: rgba(255, 255, 255, 0.05);
+      backdrop-filter: blur(10px);
+      border: 1px solid rgba(255, 255, 255, 0.1);
+    }
   </style>
 </head>
-<body class="bg-gradient-to-br from-blue-900 to-indigo-900 text-white min-h-screen">
-  <div id="root"></div>
+<body class="min-h-screen flex items-center justify-center p-4">
 
-  <script type="text/babel">
-    const { useState, useEffect, useRef } = React;
+  <!-- Login Card -->
+  <div class="w-full max-w-sm bg-gray-900 card p-8 rounded-2xl shadow-2xl border border-gray-700">
 
-    const TIER_REWARDS = { Bronze: 20, Silver: 30, Gold: 40, Platinum: 50, Diamond: 60 };
-    const PROFILE_TIERS = [
-      { name: "STARTER", cost: 0, maxStake: 1 },
-      { name: "EXPLORER", cost: 5000, maxStake: 2 },
-      { name: "INFLUENCER", cost: 20000, maxStake: 5 },
-      { name: "ELITE", cost: 50000, maxStake: 10 },
-      { name: "PRESTIGE", cost: 100000, maxStake: Infinity }
-    ];
+    <!-- Logo -->
+    <div class="flex items-center justify-center mb-6">
+      <img src="https://via.placeholder.com/40x40?text=M" alt="MEEFIE Logo" class="h-10 w-10 rounded-full mr-3 shadow-md" />
+      <h1 class="text-3xl font-bold gradient-text">MEEFIE</h1>
+    </div>
 
-    function App() {
-      const [user, setUser] = useState(null);
-      const [step, setStep] = useState("login");
-      const [photo, setPhoto] = useState(null);
-      const [celebrity, setCelebrity] = useState(null);
-      const [celebrityTier, setCelebrityTier] = useState("");
-      const [wallet, setWallet] = useState("");
-      const [kycSubmitted, setKycSubmitted] = useState(false);
-      const [profileTier, setProfileTier] = useState("STARTER");
-      const [stakedPhotos, setStakedPhotos] = useState([]);
-      const [nftPhotos, setNftPhotos] = useState([]);
+    <!-- Welcome Text -->
+    <h2 class="text-2xl font-semibold text-center mb-1 text-white">Welcome Back</h2>
+    <p class="text-gray-400 text-center text-sm mb-8">Sign in to your account</p>
 
-      const videoRef = useRef(null);
-      const canvasRef = useRef(null);
+    <!-- Login Form -->
+    <form id="loginForm">
+      <!-- Username -->
+      <div class="mb-5">
+        <label for="username" class="block text-sm font-medium text-gray-300 mb-2">Username</label>
+        <input 
+          type="text" 
+          id="username" 
+          placeholder="Enter your username" 
+          class="input-field"
+          required
+        />
+      </div>
 
-      // Login
-      const handleLogin = () => {
-        setUser({ name: "John Doe", email: "john@example.com" });
-        setStep("camera");
-      };
+      <!-- Password -->
+      <div class="mb-6">
+        <label for="password" class="block text-sm font-medium text-gray-300 mb-2">Password</label>
+        <input 
+          type="password" 
+          id="password" 
+          placeholder="Enter your password" 
+          class="input-field"
+          required
+        />
+      </div>
 
-      // Start camera
-      useEffect(() => {
-        if (step === "camera") {
-          navigator.mediaDevices.getUserMedia({ video: true })
-            .then(stream => { if (videoRef.current) videoRef.current.srcObject = stream; })
-            .catch(err => alert("Camera error: " + err.message));
-        }
-      }, [step]);
+      <!-- Sign In Button -->
+      <button type="submit" class="sign-in-btn">Sign In</button>
+    </form>
 
-      // Capture photo
-      const capturePhoto = () => {
-        const canvas = canvasRef.current;
-        const video = videoRef.current;
-        canvas.width = video.videoWidth;
-        canvas.height = video.videoHeight;
-        canvas.getContext("2d").drawImage(video, 0, 0);
-        setPhoto(canvas.toDataURL("image/png"));
-        setStep("result");
+    <!-- Sign Up Link -->
+    <p class="text-sm mt-5 text-center">
+      Don't have an account? 
+      <a href="#" class="link hover:underline font-medium">Sign up</a>
+    </p>
 
-        // Simulate AI detection
-        setTimeout(() => {
-          const celebs = ["Taylor Swift", "Leonardo DiCaprio", "Beyoncé"];
-          const detected = celebs[Math.floor(Math.random() * celebs.length)];
-          const tiers = Object.keys(TIER_REWARDS);
-          const tier = tiers[Math.floor(Math.random() * tiers.length)];
-          setCelebrity(detected);
-          setCelebrityTier(tier);
-          setStep("action");
-        }, 1500);
-      };
+    <!-- Separator -->
+    <div class="separator mt-6">
+      <div class="separator-line"></div>
+      <span>Or continue with</span>
+      <div class="separator-line"></div>
+    </div>
 
-      // Connect MetaMask
-      const connectWallet = async () => {
-        if (window.ethereum) {
-          try {
-            const accounts = await window.ethereum.request({ method: "eth_requestAccounts" });
-            setWallet(accounts[0]);
-          } catch (err) {
-            alert("Wallet denied.");
-          }
-        } else {
-          alert("Install MetaMask");
-        }
-      };
+    <!-- Google Sign-In Button -->
+    <button class="social-btn mt-5">
+      <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 48 48" class="w-5 h-5">
+        <path fill="#4285F4" d="M24 9.5c3.54 0 6.71 1.22 9.21 3.6l6.85-6.85C39.92 2.91 37.71 2 35.5 2H25v10z"/>
+        <path fill="#34A853" d="M35.5 2h-11c-3.54 0-6.71 1.22-9.21 3.6l-6.85-6.85C2.08 2.91 0 2 0 2h11v10c0 3.54 1.22 6.71 3.6 9.21l6.85 6.85C16.29 35.09 18 36 20.5 36h11V24z"/>
+        <path fill="#FBBC05" d="M20.5 40c3.54 0 6.71-1.22 9.21-3.6l-6.85-6.85C31.71 32.28 30 31 28.5 31h-11c-1.5 0-3 1.22-3.5 2.81l-6.85 6.85C4.71 38.78 6 40 8.5 40h11v-10z"/>
+        <path fill="#EA4335" d="M28.5 24c0-1.5.5-3 1.5-4.5c1-1 2.5-1.5 4.5-1.5h11v11c0 1.5-.5 3-1.5 4.5c-1 1-2.5 1.5-4.5 1.5h-11z"/>
+      </svg>
+      <span>Sign in with Google</span>
+    </button>
+  </div>
 
-      // Convert to NFT
-      const convertToNFT = () => {
-        if (!wallet) return alert("Connect wallet first.");
-        if (confirm("Pay 10,000 MFT to mint NFT?")) {
-          setNftPhotos([...nftPhotos, photo]);
-          setStep("dashboard");
-        }
-      };
+  <!-- JavaScript for Form Handling -->
+  <script>
+    // Handle Sign In
+    document.getElementById("loginForm").addEventListener("submit", function(e) {
+      e.preventDefault();
+      const username = document.getElementById("username").value;
+      const password = document.getElementById("password").value;
+      alert(`Signing in as ${username}...\nIn production, connect to Firebase/Auth0.`);
+      // Redirect to dashboard or call backend
+      window.location.href = "dashboard.html";
+    });
 
-      // Stake photo
-      const stakePhoto = () => {
-        const max = PROFILE_TIERS.find(t => t.name === profileTier).maxStake;
-        if (stakedPhotos.length >= max) return alert(`Max ${max} staked photos as ${profileTier}`);
-        setStakedPhotos([...stakedPhotos, { photo, tier: celebrityTier, apy: TIER_REWARDS[celebrityTier] }]);
-        setStep("dashboard");
-      };
+    // Handle Sign Up
+    document.querySelector(".link").addEventListener("click", function(e) {
+      e.preventDefault();
+      alert("Redirecting to Sign Up page...\nCreate a registration form.");
+    });
 
-      // Upgrade profile
-      const upgradeTier = (e) => {
-        const tier = e.target.value;
-        if (confirm(`Upgrade to ${tier}?`)) setProfileTier(tier);
-      };
-
-      // Submit KYC
-      const submitKYC = () => {
-        setKycSubmitted(true);
-        alert("KYC submitted. Verification in 3-5 days.");
-      };
-
-      // Logout
-      const logout = () => {
-        setUser(null);
-        setStep("login");
-      };
-
-      return (
-        <div className="container mx-auto px-4 py-8">
-          {/* Header */}
-          <header className="flex justify-between items-center mb-8">
-            <h1 className="text-3xl font-bold gradient-text">MEEFIE</h1>
-            {user && <button onClick={logout} className="bg-red-600 px-3 py-1 rounded">Logout</button>}
-          </header>
-
-          {/* Login */}
-          {step === "login" && (
-            <div className="text-center max-w-md mx-auto">
-              <h2 className="text-3xl font-bold mb-6">Welcome to MEEFIE</h2>
-              <button onClick={handleLogin} className="btn-yellow text-black px-6 py-3 rounded-full font-bold">
-                🔴 Continue with Google
-              </button>
-            </div>
-          )}
-
-          {/* Camera */}
-          {step === "camera" && (
-            <div className="text-center">
-              <h2 className="text-2xl font-bold mb-4">📸 Take a Photo</h2>
-              <video ref={videoRef} autoPlay className="w-full max-w-lg mx-auto rounded shadow-lg" />
-              <canvas ref={canvasRef} className="hidden"></canvas>
-              <button onClick={capturePhoto} className="mt-4 bg-green-600 px-8 py-3 rounded-full font-bold">
-                Capture
-              </button>
-            </div>
-          )}
-
-          {/* AI Result */}
-          {step === "action" && (
-            <div className="text-center max-w-lg mx-auto">
-              <h2 className="text-2xl font-bold text-yellow-400">🎉 {celebrity} Detected!</h2>
-              <p>Tier: <strong>{celebrityTier}</strong> (APY: {TIER_REWARDS[celebrityTier]}%)</p>
-              <img src={photo} alt="Captured" className="w-full rounded mt-4" />
-              <div className="space-y-3 mt-6">
-                <button onClick={convertToNFT} className="w-full bg-purple-600 p-3 rounded">
-                  💾 Convert to NFT (10,000 MFT)
-                </button>
-                <button onClick={stakePhoto} className="w-full bg-green-600 p-3 rounded">
-                  📈 Stake Photo (Earn {TIER_REWARDS[celebrityTier]}% APY)
-                </button>
-              </div>
-            </div>
-          )}
-
-          {/* Dashboard */}
-          {step === "dashboard" && (
-            <div className="max-w-4xl mx-auto">
-              <h2 className="text-3xl font-bold mb-6">Dashboard</h2>
-              <div className="grid md:grid-cols-2 gap-6">
-                <div className="bg-white/10 p-6 rounded-lg">
-                  <h3 className="font-bold">👤 Profile</h3>
-                  <p>Tier: {profileTier}</p>
-                  <p>Wallet: {wallet ? `${wallet.slice(0,6)}...${wallet.slice(-4)}` : "Not connected"}</p>
-                  <button onClick={connectWallet} className="mt-2 w-full bg-blue-600 px-4 py-2 rounded">
-                    {wallet ? "✅ Connected" : "🔌 Connect Wallet"}
-                  </button>
-                  <select onChange={upgradeTier} className="mt-2 w-full bg-gray-700 p-2 rounded">
-                    {PROFILE_TIERS.map(t => <option key={t.name}>{t.name}</option>)}
-                  </select>
-                </div>
-                <div className="bg-white/10 p-6 rounded-lg">
-                  <h3 className="font-bold">📊 Stats</h3>
-                  <p>📸 Photos Taken: {stakedPhotos.length + nftPhotos.length}</p>
-                  <p>🖼️ NFTs: {nftPhotos.length}</p>
-                  <p>📈 Staked: {stakedPhotos.length}</p>
-                  <p>💰 Estimated APY: {stakedPhotos.reduce((a, b) => a + b.apy, 0)}%</p>
-                </div>
-                <div className="bg-white/10 p-6 rounded-lg">
-                  <h3 className="font-bold">🔐 KYC</h3>
-                  <button onClick={submitKYC} className="w-full bg-yellow-600 px-4 py-2 rounded">
-                    {kycSubmitted ? "✅ Submitted" : "📄 Submit KYC"}
-                  </button>
-                </div>
-                <div className="bg-white/10 p-6 rounded-lg">
-                  <h3 className="font-bold">🖼️ Staked Photos</h3>
-                  {stakedPhotos.length === 0 ? (
-                    <p>No photos staked yet.</p>
-                  ) : (
-                    stakedPhotos.map((p, i) => (
-                      <div key={i} className="mb-2 p-2 bg-black/30 rounded flex items-center gap-2">
-                        <img src={p.photo} alt="Staked" className="w-12 h-12 object-cover rounded" />
-                        <div className="text-left text-sm">
-                          <div>{p.tier} Tier</div>
-                          <div>APY: {p.apy}%</div>
-                        </div>
-                      </div>
-                    ))
-                  )}
-                </div>
-              </div>
-            </div>
-          )}
-        </div>
-      );
-    }
-
-    ReactDOM.createRoot(document.getElementById("root")).render(<App />);
+    // Handle Google Sign-In
+    document.querySelector(".social-btn").addEventListener("click", function() {
+      alert("Google Sign-In clicked.\nIn production, integrate Google OAuth.");
+    });
   </script>
 </body>
 </html>
