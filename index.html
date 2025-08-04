@@ -17,6 +17,7 @@
     body { font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', sans-serif; }
     .gradient-text { background: linear-gradient(to right, #007bff, #ffeb3b); -webkit-background-clip: text; -webkit-text-fill-color: transparent; }
     .btn-yellow { background: linear-gradient(to right, #f57c00, #ffeb3b); }
+    .card { background: rgba(255, 255, 255, 0.1); backdrop-filter: blur(10px); }
   </style>
 </head>
 <body class="bg-gradient-to-br from-blue-900 to-indigo-900 text-white min-h-screen">
@@ -25,7 +26,6 @@
   <script type="text/babel">
     const { useState, useEffect, useRef } = React;
 
-    // Mock data
     const TIER_REWARDS = { Bronze: 20, Silver: 30, Gold: 40, Platinum: 50, Diamond: 60 };
     const PROFILE_TIERS = [
       { name: "STARTER", cost: 0, maxStake: 1 },
@@ -50,7 +50,7 @@
       const videoRef = useRef(null);
       const canvasRef = useRef(null);
 
-      // Login with Google (simulate)
+      // Login
       const handleLogin = () => {
         setUser({ name: "John Doe", email: "john@example.com" });
         setStep("camera");
@@ -188,27 +188,45 @@
             <div className="max-w-4xl mx-auto">
               <h2 className="text-3xl font-bold mb-6">Dashboard</h2>
               <div className="grid md:grid-cols-2 gap-6">
-                <div className="bg-white/10 p-6 rounded">
-                  <h3>👤 Profile</h3>
+                <div className="bg-white/10 p-6 rounded-lg">
+                  <h3 className="font-bold">👤 Profile</h3>
                   <p>Tier: {profileTier}</p>
-                  <button onClick={connectWallet} className="mt-2 bg-blue-600 px-4 py-2 rounded">
+                  <p>Wallet: {wallet ? `${wallet.slice(0,6)}...${wallet.slice(-4)}` : "Not connected"}</p>
+                  <button onClick={connectWallet} className="mt-2 w-full bg-blue-600 px-4 py-2 rounded">
                     {wallet ? "✅ Connected" : "🔌 Connect Wallet"}
                   </button>
                   <select onChange={upgradeTier} className="mt-2 w-full bg-gray-700 p-2 rounded">
                     {PROFILE_TIERS.map(t => <option key={t.name}>{t.name}</option>)}
                   </select>
                 </div>
-                <div className="bg-white/10 p-6 rounded">
-                  <h3>📊 Stats</h3>
-                  <p>📸 Taken: {stakedPhotos.length + nftPhotos.length}</p>
+                <div className="bg-white/10 p-6 rounded-lg">
+                  <h3 className="font-bold">📊 Stats</h3>
+                  <p>📸 Photos Taken: {stakedPhotos.length + nftPhotos.length}</p>
                   <p>🖼️ NFTs: {nftPhotos.length}</p>
                   <p>📈 Staked: {stakedPhotos.length}</p>
+                  <p>💰 Estimated APY: {stakedPhotos.reduce((a, b) => a + b.apy, 0)}%</p>
                 </div>
-                <div className="bg-white/10 p-6 rounded">
-                  <h3>🔐 KYC</h3>
-                  <button onClick={submitKYC} className="bg-yellow-600 px-4 py-2 rounded">
+                <div className="bg-white/10 p-6 rounded-lg">
+                  <h3 className="font-bold">🔐 KYC</h3>
+                  <button onClick={submitKYC} className="w-full bg-yellow-600 px-4 py-2 rounded">
                     {kycSubmitted ? "✅ Submitted" : "📄 Submit KYC"}
                   </button>
+                </div>
+                <div className="bg-white/10 p-6 rounded-lg">
+                  <h3 className="font-bold">🖼️ Staked Photos</h3>
+                  {stakedPhotos.length === 0 ? (
+                    <p>No photos staked yet.</p>
+                  ) : (
+                    stakedPhotos.map((p, i) => (
+                      <div key={i} className="mb-2 p-2 bg-black/30 rounded flex items-center gap-2">
+                        <img src={p.photo} alt="Staked" className="w-12 h-12 object-cover rounded" />
+                        <div className="text-left text-sm">
+                          <div>{p.tier} Tier</div>
+                          <div>APY: {p.apy}%</div>
+                        </div>
+                      </div>
+                    ))
+                  )}
                 </div>
               </div>
             </div>
