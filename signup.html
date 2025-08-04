@@ -2,21 +2,23 @@
 <html lang="en">
 <head>
   <meta charset="UTF-8" />
-  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0"/>
   <title>MEEFIE - Sign Up</title>
-  <link rel="stylesheet" href="styles.css" />
-  <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;700&display=swap" rel="stylesheet">
+  <link rel="stylesheet" href="styles/styles.css" />
 </head>
 <body>
   <div class="login-container">
     <div class="login-card">
+      <!-- Logo -->
       <div class="logo">
-        <img src="https://via.placeholder.com/40x40?text=M" alt="MEEFIE Logo" class="logo-img" />
-        <h1 class="logo-text">MEEFIE</h1>
+        <img src="images/meefie-logo.png" alt="MEEFIE Logo" class="logo-img" />
       </div>
+
+      <!-- Welcome Text -->
       <h2 class="welcome-text">Create an Account</h2>
       <p class="subtitle">Join MEEFIE today</p>
 
+      <!-- Sign-Up Form -->
       <form id="signupForm" class="login-form">
         <div class="form-group">
           <label for="email">Email</label>
@@ -29,13 +31,48 @@
         <button type="submit" class="btn-signin">Sign Up</button>
       </form>
 
+      <!-- Sign-In Link -->
       <p class="signup-link">
         Already have an account? 
         <a href="index.html">Sign in</a>
       </p>
+
+      <!-- Separator -->
+      <div class="separator">
+        <span class="line"></span>
+        <span class="text">Or continue with</span>
+        <span class="line"></span>
+      </div>
+
+      <!-- Social Sign-Up Buttons -->
+      <div class="social-buttons">
+        <button type="button" id="googleSignUp" class="social-btn">
+          <svg class="icon" xmlns="http://www.w3.org/2000/svg" viewBox="0 0 48 48">
+            <path fill="#4285F4" d="M24 9.5c3.54 0 6.71 1.22 9.21 3.6l6.85-6.85C39.92 2.91 37.71 2 35.5 2H25v10z"/>
+            <path fill="#34A853" d="M35.5 2h-11c-3.54 0-6.71 1.22-9.21 3.6l-6.85-6.85C2.08 2.91 0 2 0 2h11v10c0 3.54 1.22 6.71 3.6 9.21l6.85 6.85C16.29 35.09 18 36 20.5 36h11V24z"/>
+            <path fill="#FBBC05" d="M20.5 40c3.54 0 6.71-1.22 9.21-3.6l-6.85-6.85C31.71 32.28 30 31 28.5 31h-11c-1.5 0-3 1.22-3.5 2.81l-6.85 6.85C4.71 38.78 6 40 8.5 40h11v-10z"/>
+            <path fill="#EA4335" d="M28.5 24c0-1.5.5-3 1.5-4.5c1-1 2.5-1.5 4.5-1.5h11v11c0 1.5-.5 3-1.5 4.5c-1 1-2.5 1.5-4.5 1.5h-11z"/>
+          </svg>
+          Google
+        </button>
+        <button type="button" id="facebookSignUp" class="social-btn">
+          <svg class="icon" xmlns="http://www.w3.org/2000/svg" viewBox="0 0 48 48">
+            <path fill="#1877F2" d="M44.8 20.2H24.9c-1.9 0-3.4 1.5-3.4 3.4v8.1H16c-3.8 0-6.7 3-6.7 6.7s3 6.7 6.7 6.7h8.1v3.4c0 1.9 1.5 3.4 3.4 3.4s3.4-1.5 3.4-3.4v-8.1h9.9c1.9 0 3.4-1.5 3.4-3.4zm-17.5 7.7h-3.4v-3.4h-8v3.4h-3.4v4.7h3.4v8.1h8v-8.1h3.4v-4.7z"/>
+          </svg>
+          Facebook
+        </button>
+        <button type="button" id="instagramSignUp" class="social-btn">
+          <svg class="icon" xmlns="http://www.w3.org/2000/svg" viewBox="0 0 48 48">
+            <path fill="#E4405F" d="M44.8 20.2H24.9c-1.9 0-3.4 1.5-3.4 3.4v8.1H16c-3.8 0-6.7 3-6.7 6.7s3 6.7 6.7 6.7h8.1v3.4c0 1.9 1.5 3.4 3.4 3.4s3.4-1.5 3.4-3.4v-8.1h9.9c1.9 0 3.4-1.5 3.4-3.4z"/>
+          </svg>
+          Instagram
+        </button>
+      </div>
     </div>
   </div>
 
-  <script src="script.js"></script>
+  <!-- Firebase SDK + Config -->
+  <script type="module" src="firebase-config.js"></script>
+  <script type="module" src="auth.js"></script>
 </body>
 </html>
