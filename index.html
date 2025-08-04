@@ -5,62 +5,77 @@
   <meta name="viewport" content="width=device-width, initial-scale=1.0"/>
   <title>MEEFIE - Login</title>
 
-  <!-- Tailwind CSS -->
+  <!-- Tailwind CSS via CDN -->
   <script src="https://cdn.tailwindcss.com"></script>
 
+  <!-- Google Fonts -->
+  <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;700&display=swap" rel="stylesheet">
+
+  <!-- Custom Styles -->
   <style>
     body {
       font-family: 'Inter', sans-serif;
+      background: linear-gradient(to bottom, #0d1b2a, #1b263b);
     }
     .gradient-text {
-      background: linear-gradient(to right, #ffeb3b, #f57c00);
+      background: linear-gradient(to right, #ffeb3b, #d4a017);
       -webkit-background-clip: text;
       -webkit-text-fill-color: transparent;
       background-clip: text;
       color: transparent;
     }
     .input-field {
-      border: 1px solid #e0e0e0;
-      border-radius: 8px;
-      padding: 10px;
+      background-color: #1b2a47;
+      border: 1px solid #3a4a6a;
+      border-radius: 0.5rem;
+      padding: 0.75rem;
       width: 100%;
-      margin-bottom: 1rem;
-      transition: border-color 0.3s ease;
+      color: #e0e1e6;
+      font-size: 1rem;
+    }
+    .input-field::placeholder {
+      color: #8a9ab0;
     }
     .input-field:focus {
-      border-color: #ffeb3b;
       outline: none;
+      border-color: #d4a017;
+      box-shadow: 0 0 0 2px rgba(212, 160, 23, 0.3);
     }
     .sign-in-btn {
-      background: linear-gradient(to right, #ffeb3b, #f57c00);
+      background: linear-gradient(to right, #d4a017, #b8860b);
       color: white;
       font-weight: 600;
       border: none;
-      border-radius: 25px;
-      padding: 10px 20px;
+      border-radius: 0.5rem;
+      padding: 0.75rem 1rem;
       width: 100%;
       font-size: 1rem;
       cursor: pointer;
       transition: all 0.3s ease;
+      box-shadow: 0 4px 8px rgba(212, 160, 23, 0.3);
     }
     .sign-in-btn:hover {
       opacity: 0.9;
+      transform: translateY(-1px);
+      box-shadow: 0 6px 12px rgba(212, 160, 23, 0.4);
     }
     .social-btn {
-      background: white;
-      border: 1px solid #e0e0e0;
-      border-radius: 8px;
-      padding: 10px;
+      background: #1b2a47;
+      border: 1px solid #3a4a6a;
+      border-radius: 0.5rem;
+      padding: 0.75rem;
       display: flex;
       align-items: center;
       justify-content: center;
       gap: 0.5rem;
       cursor: pointer;
       width: 100%;
+      color: white;
       transition: all 0.3s ease;
     }
     .social-btn:hover {
-      background: #f5f5f5;
+      background: #2a3b5c;
+      transform: translateY(-1px);
     }
     .separator {
       margin: 1.5rem 0;
@@ -72,42 +87,46 @@
     .separator-line {
       flex-grow: 1;
       height: 1px;
-      background-color: #e0e0e0;
+      background-color: #3a4a6a;
     }
     .link {
-      color: #ffeb3b;
+      color: #e0c080;
       font-weight: 500;
     }
     .link:hover {
       text-decoration: underline;
     }
+    .card {
+      background: rgba(255, 255, 255, 0.05);
+      backdrop-filter: blur(10px);
+      border: 1px solid rgba(255, 255, 255, 0.1);
+    }
   </style>
 </head>
-<body class="bg-blue-900 min-h-screen flex items-center justify-center p-4">
+<body class="min-h-screen flex items-center justify-center p-4">
 
   <!-- Login Card -->
-  <div class="bg-white card w-full max-w-sm">
-    
+  <div class="w-full max-w-sm bg-gray-900 card p-8 rounded-2xl shadow-2xl border border-gray-700">
+
     <!-- Logo -->
-    <div class="flex items-center justify-center mb-4">
-      <!-- Replace with your logo -->
-      <img src="https://via.placeholder.com/40x40?text=M" alt="MEEFIE Logo" class="h-10 w-10 rounded-full mr-2 shadow-md" />
-      <span class="text-2xl font-bold gradient-text">MEEFIE</span>
+    <div class="flex items-center justify-center mb-6">
+      <img src="https://via.placeholder.com/40x40?text=M" alt="MEEFIE Logo" class="h-10 w-10 rounded-full mr-3 shadow-md" />
+      <h1 class="text-3xl font-bold gradient-text">MEEFIE</h1>
     </div>
 
     <!-- Welcome Text -->
-    <h2 class="text-xl font-semibold text-center mb-1 text-gray-800">Welcome to MEEFIE</h2>
-    <p class="text-gray-600 text-center text-sm mb-6">Login to your account</p>
+    <h2 class="text-2xl font-semibold text-center mb-1 text-white">Welcome Back</h2>
+    <p class="text-gray-400 text-center text-sm mb-8">Sign in to your account</p>
 
     <!-- Login Form -->
-    <form>
-      <!-- Email -->
-      <div class="mb-4">
-        <label for="email" class="block text-sm font-medium text-gray-800 mb-1">Email</label>
+    <form id="loginForm">
+      <!-- Username -->
+      <div class="mb-5">
+        <label for="username" class="block text-sm font-medium text-gray-300 mb-2">Username</label>
         <input 
-          type="email" 
-          id="email" 
-          placeholder="Enter your email" 
+          type="text" 
+          id="username" 
+          placeholder="Enter your username" 
           class="input-field"
           required
         />
@@ -115,7 +134,7 @@
 
       <!-- Password -->
       <div class="mb-6">
-        <label for="password" class="block text-sm font-medium text-gray-800 mb-1">Password</label>
+        <label for="password" class="block text-sm font-medium text-gray-300 mb-2">Password</label>
         <input 
           type="password" 
           id="password" 
@@ -130,46 +149,51 @@
     </form>
 
     <!-- Sign Up Link -->
-    <p class="text-sm mt-4 text-center">
+    <p class="text-sm mt-5 text-center">
       Don't have an account? 
-      <a href="#" class="link hover:underline">Sign up</a>
+      <a href="#" class="link hover:underline font-medium">Sign up</a>
     </p>
 
     <!-- Separator -->
-    <div class="separator">
+    <div class="separator mt-6">
       <div class="separator-line"></div>
       <span>Or continue with</span>
       <div class="separator-line"></div>
     </div>
 
     <!-- Google Sign-In Button -->
-    <button class="social-btn">
+    <button class="social-btn mt-5">
       <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 48 48" class="w-5 h-5">
         <path fill="#4285F4" d="M24 9.5c3.54 0 6.71 1.22 9.21 3.6l6.85-6.85C39.92 2.91 37.71 2 35.5 2H25v10z"/>
         <path fill="#34A853" d="M35.5 2h-11c-3.54 0-6.71 1.22-9.21 3.6l-6.85-6.85C2.08 2.91 0 2 0 2h11v10c0 3.54 1.22 6.71 3.6 9.21l6.85 6.85C16.29 35.09 18 36 20.5 36h11V24z"/>
         <path fill="#FBBC05" d="M20.5 40c3.54 0 6.71-1.22 9.21-3.6l-6.85-6.85C31.71 32.28 30 31 28.5 31h-11c-1.5 0-3 1.22-3.5 2.81l-6.85 6.85C4.71 38.78 6 40 8.5 40h11v-10z"/>
         <path fill="#EA4335" d="M28.5 24c0-1.5.5-3 1.5-4.5c1-1 2.5-1.5 4.5-1.5h11v11c0 1.5-.5 3-1.5 4.5c-1 1-2.5 1.5-4.5 1.5h-11z"/>
       </svg>
-      <span>Google</span>
+      <span>Sign in with Google</span>
     </button>
   </div>
 
-  <!-- JavaScript for Placeholder Functions -->
+  <!-- JavaScript for Form Handling -->
   <script>
-    // Placeholder function for Sign In
-    document.querySelector('form').addEventListener('submit', (e) => {
+    // Handle Sign In
+    document.getElementById("loginForm").addEventListener("submit", function(e) {
       e.preventDefault();
-      alert('Sign In clicked! Connect to backend for authentication.');
+      const username = document.getElementById("username").value;
+      const password = document.getElementById("password").value;
+      alert(`Signing in as ${username}...\nIn production, connect to Firebase/Auth0.`);
+      // Redirect to dashboard or call backend
+      window.location.href = "dashboard.html";
     });
 
-    // Placeholder function for Sign Up
-    document.querySelector('.link').addEventListener('click', () => {
-      alert('Sign Up clicked! Redirect to registration page.');
+    // Handle Sign Up
+    document.querySelector(".link").addEventListener("click", function(e) {
+      e.preventDefault();
+      alert("Redirecting to Sign Up page...\nCreate a registration form.");
     });
 
-    // Placeholder function for Google Sign-In
-    document.querySelector('.social-btn').addEventListener('click', () => {
-      alert('Google Sign-In clicked! Implement OAuth for Google login.');
+    // Handle Google Sign-In
+    document.querySelector(".social-btn").addEventListener("click", function() {
+      alert("Google Sign-In clicked.\nIn production, integrate Google OAuth.");
     });
   </script>
 </body>
