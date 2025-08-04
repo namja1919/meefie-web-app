@@ -1,13 +1,13 @@
+// auth.js
 import { auth } from './firebase-config.js';
 import { 
   signInWithEmailAndPassword, 
   createUserWithEmailAndPassword,
   signInWithPopup, 
-  GoogleAuthProvider, 
-  FacebookAuthProvider 
+  GoogleAuthProvider 
 } from 'https://www.gstatic.com/firebasejs/9.22.0/firebase-auth.js';
 
-// Handle Email/Password Sign In
+// Email/Password Sign In
 document.getElementById("loginForm")?.addEventListener("submit", async (e) => {
   e.preventDefault();
   const email = document.getElementById("email").value;
@@ -22,7 +22,7 @@ document.getElementById("loginForm")?.addEventListener("submit", async (e) => {
   }
 });
 
-// Handle Email/Password Sign Up
+// Email/Password Sign Up
 document.getElementById("signupForm")?.addEventListener("submit", async (e) => {
   e.preventDefault();
   const email = document.getElementById("email").value;
@@ -37,39 +37,23 @@ document.getElementById("signupForm")?.addEventListener("submit", async (e) => {
   }
 });
 
-// Handle Google Sign-In/Up
+// Google Sign-In
 const googleProvider = new GoogleAuthProvider();
 document.getElementById("googleSignIn")?.addEventListener("click", async () => {
-  handleSocialSignIn(googleProvider, "Google");
-});
-document.getElementById("googleSignUp")?.addEventListener("click", async () => {
-  handleSocialSignIn(googleProvider, "Google");
-});
-
-// Handle Facebook Sign-In/Up
-const facebookProvider = new FacebookAuthProvider();
-document.getElementById("facebookSignIn")?.addEventListener("click", async () => {
-  handleSocialSignIn(facebookProvider, "Facebook");
-});
-document.getElementById("facebookSignUp")?.addEventListener("click", async () => {
-  handleSocialSignIn(facebookProvider, "Facebook");
-});
-
-// Handle Instagram (not direct)
-document.getElementById("instagramSignIn")?.addEventListener("click", () => {
-  alert("⚠️ Instagram login requires Facebook OAuth setup.");
-});
-document.getElementById("instagramSignUp")?.addEventListener("click", () => {
-  alert("⚠️ Instagram sign-up requires Facebook OAuth setup.");
-});
-
-// Reusable social sign-in function
-async function handleSocialSignIn(provider, providerName) {
   try {
-    await signInWithPopup(auth, provider);
-    alert(`✅ Signed in with ${providerName}!`);
+    await signInWithPopup(auth, googleProvider);
     window.location.href = "dashboard.html";
   } catch (error) {
-    alert(`❌ ${providerName} login failed: ${error.message}`);
+    alert(`❌ Google login failed: ${error.message}`);
   }
-}
+});
+
+// Google Sign-Up (same as sign-in)
+document.getElementById("googleSignUp")?.addEventListener("click", async () => {
+  try {
+    await signInWithPopup(auth, googleProvider);
+    window.location.href = "dashboard.html";
+  } catch (error) {
+    alert(`❌ Google sign-up failed: ${error.message}`);
+  }
+});
