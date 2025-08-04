@@ -39,14 +39,15 @@ document.getElementById("signupForm")?.addEventListener("submit", async (e) => {
 });
 
 // ——— Google Sign-In/Up ———
-document.getElementById("googleSignIn")?.addEventListener("click", async () => {
+document.getElementById("googleSignIn").addEventListener("click", async () => {
   const provider = new GoogleAuthProvider();
-  handleSocialSignIn(provider, "Google");
-});
-
-document.getElementById("googleSignUp")?.addEventListener("click", async () => {
-  const provider = new GoogleAuthProvider();
-  handleSocialSignIn(provider, "Google");
+  try {
+    await signInWithPopup(auth, provider);
+    alert(`Signed in with Google!`);
+    window.location.href = "dashboard.html";
+  } catch (error) {
+    alert(`Google login failed: ${error.message}`);
+  }
 });
 
 // ——— Facebook Sign-In/Up ———
