@@ -48,6 +48,15 @@ window.addEventListener('photoCaptured', async (e) => {
     const photoCount = parseInt(document.getElementById('photoCount').textContent) + 1;
     document.getElementById('photoCount').textContent = photoCount;
 
+    // After detecting celebrity
+    addPhotoToGallery(photoDataUrl, "Captured", mockCelebrity, apyMap[tier]);
+
+    // In convertToNFT
+    addPhotoToGallery(photoDataUrl, "NFT", "Taylor Swift", 60);
+    
+    // In stakePhoto
+    addPhotoToGallery(photoDataUrl, "Staked", "Taylor Swift", 60);
+
   } catch (error) {
     alert("AI detection failed. Try again.");
   }
