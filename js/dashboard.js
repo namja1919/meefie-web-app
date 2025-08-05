@@ -82,3 +82,43 @@ window.logout = async () => {
   await signOut(auth);
   window.location.href = "index.html";
 };
+
+// Photo Gallery
+window.photoGallery = [];
+window.nftCount = 0;
+window.stakedCount = 0;
+window.photoCount = 0;
+
+window.addPhotoToGallery = (photoDataUrl, type, celebrity, apy = 0) => {
+  window.photoGallery.push({ photoDataUrl, type, celebrity, apy });
+
+  // Update counts
+  if (type === "NFT") window.nftCount++;
+  if (type === "Staked") window.stakedCount++;
+  window.photoCount++;
+
+  // Re-render
+  renderPhotoGallery();
+  updateStats();
+};
+
+function renderPhotoGallery() {
+  const gallery = document.getElementById('photoGallery');
+  gallery.innerHTML = '';
+
+  window.photoGallery.forEach(item => {
+    const div = document.createElement('div');
+    div.className = 'gallery-item';
+    div.innerHTML = `
+      <img src="${item.photoDataUrl}" alt="Photo" style="width: 80px; height: 80px; object-fit: cover; border-radius: 8px;">
+      <div style="font-size: 12px; margin-top: 4px;">
+        <strong>${item.type}</strong><br>
+        ${item.celebrity} (${item.apy}%)
+      </div>
+    `;
+    gallery.appendChild(div);
+  });
+}
+
+// Initial render
+renderPhotoGallery();
