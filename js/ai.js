@@ -1,63 +1,35 @@
 // js/ai.js
-import { auth } from '../firebase-config.js';
-
 window.addEventListener('photoCaptured', async (e) => {
   const photoDataUrl = e.detail;
 
-  try {
-    // Call Qwen Vision API (you need Alibaba Cloud API key)
-    const response = await fetch('https://dashscope.aliyuncs.com/api/v1/services/aigc/multimodal-generation', {
-      method: 'POST',
-      headers: {
-        'Authorization': 'Bearer YOUR_DASHSCOPE_API_KEY',
-        'Content-Type': 'application/json'
-      },
-      body: JSON.stringify({
-        model: 'qwen-vl-plus',
-        input: {
-          messages: [
-            {
-              role: 'user',
-              content: [
-                { image: photoDataUrl },
-                { text: 'Is there a celebrity in this image? If yes, who? Respond in JSON: { "celebrity": "Name", "confidence": 0.9 }' }
-              ]
-            }
-          ]
-        }
-      })
-    });
-
-    const result = await response.json();
-    const celebrity = result.output.choices[0].message.content;
-
-    // Mock for demo (remove in production)
-    const mockCelebrity = "Taylor Swift";
+  // ✅ Mock AI Detection (for demo)
+  setTimeout(() => {
+    const celebs = ["Taylor Swift", "Leonardo DiCaprio", "Beyoncé", "Robert Downey Jr.", "Rihanna"];
     const tiers = ["Bronze", "Silver", "Gold", "Platinum", "Diamond"];
+    
+    const detected = Math.random() > 0.3; // 70% chance of detection
+    if (!detected) {
+      alert("No celebrity detected. Try again!");
+      return;
+    }
+
+    const celebrity = celebs[Math.floor(Math.random() * celebs.length)];
     const tier = tiers[Math.floor(Math.random() * tiers.length)];
     const apyMap = { Bronze: 20, Silver: 30, Gold: 40, Platinum: 50, Diamond: 60 };
+    const apy = apyMap[tier];
 
     // Show AI result
     document.getElementById('aiResult').classList.remove('hidden');
-    document.getElementById('celebrityName').textContent = mockCelebrity;
+    document.getElementById('celebrityName').textContent = celebrity;
     document.getElementById('celebrityTier').textContent = tier;
-    document.getElementById('celebrityAPY').textContent = `${apyMap[tier]}%`;
+    document.getElementById('celebrityAPY').textContent = `${apy}%`;
     document.getElementById('capturedPhoto').src = photoDataUrl;
 
-    // Update counts
+    // Update photo count
     const photoCount = parseInt(document.getElementById('photoCount').textContent) + 1;
     document.getElementById('photoCount').textContent = photoCount;
 
-    // After detecting celebrity
-    addPhotoToGallery(photoDataUrl, "Captured", mockCelebrity, apyMap[tier]);
-
-    // In convertToNFT
-    addPhotoToGallery(photoDataUrl, "NFT", "Taylor Swift", 60);
-    
-    // In stakePhoto
-    addPhotoToGallery(photoDataUrl, "Staked", "Taylor Swift", 60);
-
-  } catch (error) {
-    alert("AI detection failed. Try again.");
-  }
+    // Add to gallery
+    window.addPhotoToGallery(photoDataUrl, "Captured", celebrity, apy);
+  }, 1500);
 });
