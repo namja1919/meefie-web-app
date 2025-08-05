@@ -122,3 +122,76 @@ function renderPhotoGallery() {
 
 // Initial render
 renderPhotoGallery();
+
+// ——— Tier Upgrade/Downgrade Logic ———
+const tierSelect = document.getElementById('tierSelect');
+const updateTierBtn = document.getElementById('updateTierBtn');
+
+// Tier definitions
+const TIER_COSTS = {
+  STARTER: 0,
+  EXPLORER: 5000,
+  INFLUENCER: 20000,
+  ELITE: 50000,
+  PRESTIGE: 100000
+};
+
+const TIER_MAX_STAKES = {
+  STARTER: 1,
+  EXPLORER: 2,
+  INFLUENCER: 5,
+  ELITE: 10,
+  PRESTIGE: Infinity
+};
+
+// Update tier dropdown based on current tier
+function syncTierDropdown() {
+  tierSelect.value = profileTier;
+}
+
+// Update Tier Button Click
+updateTierBtn.addEventListener('click', () => {
+  const selectedTier = tierSelect.value;
+
+  // Same tier? Do nothing
+  if (selectedTier === profileTier) {
+    alert(`You're already on the ${profileTier} tier.`);
+    return;
+  }
+
+  // Downgrade: Instant (no payment)
+  if (TIER_COSTS[selectedTier] < TIER_COSTS[profileTier]) {
+    if (confirm(`Downgrade to ${selectedTier}?`)) {
+      profileTier = selectedTier;
+      maxStakes = TIER_MAX_STAKES[profileTier];
+      updateStats();
+      syncTierDropdown();
+      alert(`✅ Downgraded to ${profileTier} tier!`);
+    }
+    return;
+  }
+
+  // Upgrade: Requires wallet & MFT
+  if (!walletAddress) {
+    alert("⚠️ Please connect your wallet first.");
+    return;
+  }
+
+  const cost = TIER_COSTS[selectedTier];
+  if (mftBalance < cost) {
+    alert(`❌ Not enough MFT! You need ${cost}, but only have ${mftBalance}.`);
+    return;
+  }
+
+  if (confirm(`Upgrade to ${selectedTier} for ${cost} MFT?`)) {
+    mftBalance -= cost;
+    profileTier = selectedTier;
+    maxStakes = TIER_MAX_STAKES[profileTier];
+    updateStats();
+    syncTierDropdown();
+    alert(`✅ Upgraded to ${profileTier} tier! ${cost} MFT deducted.`);
+  }
+});
+
+// Initialize
+syncTierDropdown();
