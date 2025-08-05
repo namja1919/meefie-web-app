@@ -15,7 +15,7 @@
         <span class="gradient-text">MEEFIE</span>
       </div>
       <div class="user-actions">
-        <span class="wallet" id="walletBtn">👛 Connect Wallet</span>
+        <span class="wallet" id="walletBtn">Connect Wallet</span>
         <button onclick="logout()" class="btn-logout">Logout</button>
       </div>
     </header>
@@ -36,7 +36,7 @@
       <section class="info-section">
         <!-- User Stats -->
         <div class="card">
-          <h3>👤 User Stats</h3>
+          <h3>User Stats</h3>
           <p>Photos Taken: <span id="photoCount">0</span></p>
           <p>NFTs Created: <span id="nftCount">0</span></p>
           <p>Staked Photos: <span id="stakedCount">0</span></p>
@@ -45,7 +45,7 @@
 
         <!-- Profile Tier -->
         <div class="card">
-          <h3>🏆 Profile Tier: <span id="profileTier">STARTER</span></h3>
+          <h3>Profile Tier: <span id="profileTier">STARTER</span></h3>
           <p>Max Stakes: <span id="maxStakes">1</span></p>
           <button id="upgradeTierBtn" class="btn-upgrade">Upgrade Tier</button>
         </div>
@@ -56,13 +56,21 @@
           <p>Tier: <strong id="celebrityTier">Diamond</strong> (APY: <span id="celebrityAPY">60%</span>)</p>
           <img id="capturedPhoto" alt="Captured" class="captured-img" />
           <div class="action-buttons">
-            <button id="convertToNFT" class="btn-nft">💾 Convert to NFT (10,000 MFT)</button>
-            <button id="stakePhoto" class="btn-stake">📈 Stake Photo</button>
+            <button id="convertToNFT" class="btn-nft">Convert to NFT (10,000 MFT)</button>
+            <button id="stakePhoto" class="btn-stake">Stake Photo</button>
           </div>
         </div>
       </section>
     </main>
   </div>
+  
+  <!-- Photo Gallery Widget -->
+<div class="card">
+  <h3>🖼️ My Photos</h3>
+  <div class="photo-gallery" id="photoGallery">
+    <!-- Photos will be added here dynamically -->
+  </div>
+</div>
 
   <!-- Scripts -->
   <script type="module" src="js/camera.js"></script>
@@ -71,3 +79,4 @@
   <script type="module" src="js/dashboard.js"></script>
 </body>
 </html>
+
