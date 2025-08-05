@@ -44,11 +44,23 @@
         </div>
 
         <!-- Profile Tier -->
-        <div class="card">
-          <h3>🏆 Profile Tier: <span id="profileTier">STARTER</span></h3>
-          <p>Max Stakes: <span id="maxStakes">1</span></p>
-          <button id="upgradeTierBtn" class="btn-upgrade">Upgrade Tier</button>
-        </div>
+          <div class="card">
+            <h3>🏆 Profile Tier</h3>
+            <div class="tier-controls">
+              <select id="tierSelect" class="tier-dropdown">
+                <option value="STARTER">STARTER (Free)</option>
+                <option value="EXPLORER">EXPLORER (5,000 MFT)</option>
+                <option value="INFLUENCER">INFLUENCER (20,000 MFT)</option>
+                <option value="ELITE">ELITE (50,000 MFT)</option>
+                <option value="PRESTIGE">PRESTIGE (100,000 MFT)</option>
+              </select>
+              <button id="updateTierBtn" class="btn-upgrade">Update Tier</button>
+            </div>
+            <p style="margin-top: 10px; font-size: 14px;">
+              <strong>Current:</strong> <span id="profileTier">STARTER</span> | 
+              <strong>Max Stakes:</strong> <span id="maxStakes">1</span>
+            </p>
+          </div>
 
         <!-- AI Result (after capture) -->
         <div id="aiResult" class="card hidden">
@@ -304,3 +316,4 @@
   </script>
 </body>
 </html>
+
