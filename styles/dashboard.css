@@ -234,6 +234,21 @@ video {
   display: none;
 }
 
+.photo-gallery {
+  display: flex;
+  gap: 12px;
+  flex-wrap: wrap;
+  margin-top: 12px;
+}
+
+.gallery-item {
+  text-align: center;
+  background: rgba(255, 255, 255, 0.1);
+  padding: 8px;
+  border-radius: 8px;
+  min-width: 80px;
+}
+
 /* Responsive */
 @media (max-width: 768px) {
   .main {
