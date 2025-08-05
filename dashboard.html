@@ -4,70 +4,70 @@
   <meta charset="UTF-8" />
   <meta name="viewport" content="width=device-width, initial-scale=1.0"/>
   <title>MEEFIE - Dashboard</title>
-  <script src="https://cdn.tailwindcss.com"></script>
-  <style>
-    body { font-family: 'Inter', sans-serif; background: #0d1b2a; }
-    .gradient-text { background: linear-gradient(to right, #ffeb3b, #d4a017); -webkit-background-clip: text; -webkit-text-fill-color: transparent; }
-  </style>
+  <link rel="stylesheet" href="styles/dashboard.css" />
 </head>
-<body class="text-white min-h-screen p-6">
-  <div class="max-w-5xl mx-auto">
-
+<body>
+  <div class="dashboard-container">
     <!-- Header -->
-    <header class="flex justify-between items-center mb-8">
-      <h1 class="text-3xl font-bold gradient-text">MEEFIE</h1>
-      <div class="flex items-center gap-4">
-        <span class="text-yellow-400">500 MFT</span>
-        <button onclick="logout()" class="bg-red-600 px-4 py-2 rounded">Logout</button>
+    <header class="header">
+      <div class="logo">
+        <img src="images/meefie-logo.png" alt="MEEFIE Logo" class="logo-img" />
+        <span class="gradient-text">MEEFIE</span>
+      </div>
+      <div class="user-actions">
+        <span class="wallet" id="walletBtn">👛 Connect Wallet</span>
+        <button onclick="logout()" class="btn-logout">Logout</button>
       </div>
     </header>
 
-    <!-- Welcome -->
-    <section class="bg-white/10 p-8 rounded-2xl mb-8 backdrop-blur-sm text-center">
-      <h2 class="text-2xl font-bold mb-4">Welcome, John Doe!</h2>
-      <p class="text-gray-300">Take a photo with a celebrity and earn rewards.</p>
-      <button onclick="openCamera()" class="mt-4 bg-gradient-to-r from-yellow-500 to-orange-600 px-6 py-3 rounded-full font-bold">
-        📸 Open Camera
-      </button>
-    </section>
+    <!-- Main Content -->
+    <main class="main">
+      <!-- Left: Camera & Capture -->
+      <section class="camera-section">
+        <h2>📸 Take a Photo</h2>
+        <video id="video" autoplay playsinline></video>
+        <canvas id="canvas" class="hidden"></canvas>
+        <div class="camera-controls">
+          <button id="captureBtn" class="btn-capture">Capture</button>
+        </div>
+      </section>
 
-    <!-- Stats -->
-    <div class="grid md:grid-cols-3 gap-6 mb-8">
-      <div class="bg-white/10 p-6 rounded-xl text-center">
-        <h3 class="text-lg font-bold">Photos Taken</h3>
-        <p class="text-2xl">12</p>
-      </div>
-      <div class="bg-white/10 p-6 rounded-xl text-center">
-        <h3 class="text-lg font-bold">NFTs Created</h3>
-        <p class="text-2xl">3</p>
-      </div>
-      <div class="bg-white/10 p-6 rounded-xl text-center">
-        <h3 class="text-lg font-bold">Staked Photos</h3>
-        <p class="text-2xl">5</p>
-      </div>
-    </div>
+      <!-- Right: Stats & Actions -->
+      <section class="info-section">
+        <!-- User Stats -->
+        <div class="card">
+          <h3>👤 User Stats</h3>
+          <p>Photos Taken: <span id="photoCount">0</span></p>
+          <p>NFTs Created: <span id="nftCount">0</span></p>
+          <p>Staked Photos: <span id="stakedCount">0</span></p>
+          <p>Wallet: <span id="walletAddress" class="text-sm">Not connected</span></p>
+        </div>
 
-    <!-- Upgrade Tier -->
-    <div class="bg-white/10 p-8 rounded-2xl">
-      <h2 class="text-2xl font-bold mb-4">Upgrade Your Profile</h2>
-      <p class="text-gray-300 mb-4">Unlock more staking slots and VIP features</p>
-      <div class="grid md:grid-cols-2 gap-4">
-        <button class="bg-blue-600 p-3 rounded-lg">Explorer (20 MFT)</button>
-        <button class="bg-blue-600 p-3 rounded-lg">Influencer (50 MFT)</button>
-        <button class="bg-blue-600 p-3 rounded-lg">Elite (100 MFT)</button>
-        <button class="bg-blue-600 p-3 rounded-lg">Prestige (500 MFT)</button>
-      </div>
-    </div>
+        <!-- Profile Tier -->
+        <div class="card">
+          <h3>🏆 Profile Tier: <span id="profileTier">STARTER</span></h3>
+          <p>Max Stakes: <span id="maxStakes">1</span></p>
+          <button id="upgradeTierBtn" class="btn-upgrade">Upgrade Tier</button>
+        </div>
 
+        <!-- AI Result (after capture) -->
+        <div id="aiResult" class="card hidden">
+          <h3>🎉 Detected: <span id="celebrityName">Taylor Swift</span></h3>
+          <p>Tier: <strong id="celebrityTier">Diamond</strong> (APY: <span id="celebrityAPY">60%</span>)</p>
+          <img id="capturedPhoto" alt="Captured" class="captured-img" />
+          <div class="action-buttons">
+            <button id="convertToNFT" class="btn-nft">💾 Convert to NFT (10,000 MFT)</button>
+            <button id="stakePhoto" class="btn-stake">📈 Stake Photo</button>
+          </div>
+        </div>
+      </section>
+    </main>
   </div>
 
-  <script>
-    function openCamera() {
-      alert("Camera opens here. In full app, this uses your webcam.");
-    }
-    function logout() {
-      window.location.href = "index.html";
-    }
-  </script>
+  <!-- Scripts -->
+  <script type="module" src="js/camera.js"></script>
+  <script type="module" src="js/ai.js"></script>
+  <script type="module" src="js/web3.js"></script>
+  <script type="module" src="js/dashboard.js"></script>
 </body>
 </html>
