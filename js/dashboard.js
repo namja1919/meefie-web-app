@@ -1,4 +1,6 @@
 // js/dashboard.js
+import { auth } from '../firebase-config.js';
+import { signOut } from 'https://www.gstatic.com/firebasejs/9.22.0/firebase-auth.js';
 let nftCount = 0;
 let stakedCount = 0;
 let profileTier = "STARTER";
@@ -11,6 +13,39 @@ function updateStats() {
   document.getElementById('profileTier').textContent = profileTier;
   document.getElementById('maxStakes').textContent = maxStakes;
 }
+
+// Upgrade Tier with Wallet & MFT Payment
+document.getElementById('upgradeTierBtn').addEventListener('click', () => {
+  if (!window.walletAddress) {
+    alert("Please connect your wallet first.");
+    return;
+  }
+
+  const tiers = [
+    { name: "EXPLORER", cost: 5000, max: 2 },
+    { name: "INFLUENCER", cost: 20000, max: 5 },
+    { name: "ELITE", cost: 50000, max: 10 },
+    { name: "PRESTIGE", cost: 100000, max: Infinity }
+  ];
+
+  const currentTierIndex = ["STARTER", "EXPLORER", "INFLUENCER", "ELITE", "PRESTIGE"].indexOf(profileTier);
+  if (currentTierIndex >= tiers.length) return;
+
+  const nextTier = tiers[currentTierIndex];
+  if (!nextTier) {
+    alert("You're already at the highest tier!");
+    return;
+  }
+
+  if (confirm(`Upgrade to ${nextTier.name} for ${nextTier.cost} MFT?`)) {
+    // Simulate MFT deduction (in production, call smart contract)
+    alert(`${nextTier.cost} MFT will be deducted from your wallet.`);
+    profileTier = nextTier.name;
+    maxStakes = nextTier.max;
+    updateStats();
+    alert(`✅ Upgraded to ${profileTier} tier!`);
+  }
+});
 
 // Convert to NFT
 document.getElementById('convertToNFT').addEventListener('click', () => {
@@ -56,8 +91,15 @@ document.getElementById('upgradeTierBtn').addEventListener('click', () => {
 
 // Logout
 function logout() {
-  window.location.href = "index.html";
+  signOut(auth).then(() => {
+    window.location.href = "index.html";
+  }).catch((error) => {
+    alert("Logout failed: " + error.message);
+  });
 }
+
+// Attach to button
+window.logout = logout;
 
 // Initialize
 updateStats();
