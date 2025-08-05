@@ -98,6 +98,37 @@ function logout() {
   });
 }
 
+// Photo Gallery
+let photoGallery = [];
+
+// Add photo to gallery
+function addPhotoToGallery(photoDataUrl, type, celebrity, apy = 0) {
+  photoGallery.push({ photoDataUrl, type, celebrity, apy });
+  renderPhotoGallery();
+}
+
+// Render gallery
+function renderPhotoGallery() {
+  const gallery = document.getElementById('photoGallery');
+  gallery.innerHTML = '';
+
+  photoGallery.forEach((item, i) => {
+    const div = document.createElement('div');
+    div.className = 'gallery-item';
+    div.innerHTML = `
+      <img src="${item.photoDataUrl}" alt="Photo" style="width: 80px; height: 80px; object-fit: cover; border-radius: 8px;">
+      <div style="font-size: 12px; margin-top: 4px;">
+        <strong>${item.type}</strong><br>
+        ${item.celebrity} (${item.apy}%)
+      </div>
+    `;
+    gallery.appendChild(div);
+  });
+}
+
+// Call after NFT or stake
+// Example: addPhotoToGallery(photoDataUrl, "NFT", "Taylor Swift", 60);
+
 // Attach to button
 window.logout = logout;
 
