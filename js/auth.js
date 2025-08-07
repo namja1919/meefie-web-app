@@ -10,7 +10,7 @@ const firebaseConfig = {
   projectId: "meefie-web-app",
   storageBucket: "meefie-web-app.appspot.com",
   messagingSenderId: "874544488197",
-  appId: "1:1056787620759:web:abc123def456..." // ← Replace with your real Firebase App ID
+  appId: "1:1056787620759:web:85fd354e87bd1add16216c" // ← Replace with your real Firebase App ID
 };
 
 // Initialize Firebase
