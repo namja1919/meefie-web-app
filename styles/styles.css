@@ -138,3 +138,33 @@ body {
   width: 20px;
   height: 20px;
 }
+/* Select Input */
+.select-input {
+  width: 100%;
+  padding: 12px;
+  border: 1px solid #ddd;
+  border-radius: 8px;
+  font-size: 16px;
+  background: white;
+  cursor: pointer;
+}
+
+.select-input:focus {
+  border-color: #007bff;
+  outline: none;
+}
+
+/* Date Input */
+.form-group input[type="date"] {
+  width: 100%;
+  padding: 12px;
+  border: 1px solid #ddd;
+  border-radius: 8px;
+  font-size: 16px;
+  cursor: pointer;
+}
+
+.form-group input[type="date"]:focus {
+  border-color: #007bff;
+  outline: none;
+}
