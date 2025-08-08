@@ -20,14 +20,43 @@
 
       <!-- Sign-Up Form -->
       <form id="signupForm" class="login-form">
+        <!-- Username -->
+        <div class="form-group">
+          <label for="username">Username</label>
+          <input type="text" id="username" placeholder="Choose a username" required />
+        </div>
+
+        <!-- Email -->
         <div class="form-group">
           <label for="email">Email</label>
           <input type="email" id="email" placeholder="Enter your email" required />
         </div>
+
+        <!-- Password -->
         <div class="form-group">
           <label for="password">Password</label>
           <input type="password" id="password" placeholder="Create a password" required />
         </div>
+
+        <!-- Gender -->
+        <div class="form-group">
+          <label for="gender">Gender</label>
+          <select id="gender" class="select-input" required>
+            <option value="" disabled selected>Select gender</option>
+            <option value="Male">Male</option>
+            <option value="Female">Female</option>
+            <option value="Non-binary">Non-binary</option>
+            <option value="Prefer not to say">Prefer not to say</option>
+          </select>
+        </div>
+
+        <!-- Birthdate -->
+        <div class="form-group">
+          <label for="birthdate">Birthdate</label>
+          <input type="date" id="birthdate" required />
+        </div>
+
+        <!-- Sign Up Button -->
         <button type="submit" class="btn-signin">Sign Up</button>
       </form>
 
@@ -44,21 +73,15 @@
         <span class="line"></span>
       </div>
 
-      <!-- Google Only -->
+      <!-- Google Sign-Up -->
       <button type="button" id="googleSignUp" class="social-btn">
-        <svg class="icon" xmlns="http://www.w3.org/2000/svg" viewBox="0 0 48 48">
-          <path fill="#4285F4" d="M24 9.5c3.54 0 6.71 1.22 9.21 3.6l6.85-6.85C39.92 2.91 37.71 2 35.5 2H25v10z"/>
-          <path fill="#34A853" d="M35.5 2h-11c-3.54 0-6.71 1.22-9.21 3.6l-6.85-6.85C2.08 2.91 0 2 0 2h11v10c0 3.54 1.22 6.71 3.6 9.21l6.85 6.85C16.29 35.09 18 36 20.5 36h11V24z"/>
-          <path fill="#FBBC05" d="M20.5 40c3.54 0 6.71-1.22 9.21-3.6l-6.85-6.85C31.71 32.28 30 31 28.5 31h-11c-1.5 0-3 1.22-3.5 2.81l-6.85 6.85C4.71 38.78 6 40 8.5 40h11v-10z"/>
-          <path fill="#EA4335" d="M28.5 24c0-1.5.5-3 1.5-4.5c1-1 2.5-1.5 4.5-1.5h11v11c0 1.5-.5 3-1.5 4.5c-1 1-2.5 1.5-4.5 1.5h-11z"/>
-        </svg>
+        <img src="images/google_logo_icon.png" alt="Google" class="icon" />
         Continue with Google
       </button>
     </div>
   </div>
 
   <!-- Firebase SDK + Config -->
-  <script type="module" src="firebase-config.js"></script>
-  <script type="module" src="auth.js"></script>
+  <script type="module" src="js/auth.js"></script>
 </body>
 </html>
