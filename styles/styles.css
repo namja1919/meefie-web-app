@@ -27,6 +27,34 @@ body {
   width: 60px;
   height: 60px;
   border-radius: 50%;
+  /* ——— Social Button Container (Centered) ——— */
+.social-btn-container {
+  display: flex;
+  justify-content: center;
+  width: 100%;
+  margin: 16px 0;
+}
+
+/* ——— Placeholder Color Fix ——— */
+.form-group input::placeholder,
+.select-input {
+  color: #888; /* Gray placeholder */
+  opacity: 1;
+}
+
+/* For date input placeholder */
+input[type="date"]::before {
+  color: #888;
+}
+
+/* Optional: Style for date input */
+input[type="date"] {
+  color: white;
+}
+
+input[type="date"]:focus {
+  border-color: #007bff;
+}
   object-fit: cover;
   border: 2px solid #ffeb3b;
 }
